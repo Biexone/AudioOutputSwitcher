@@ -498,13 +498,15 @@ namespace LineInTray.WinUI
             try
             {
                 using RegistryKey? key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                if (key?.GetValue(AppInfo.RunValueName) is string existing && !string.IsNullOrEmpty(existing))
+                if (key == null) return;
+                string? existing = key.GetValue(AppInfo.RunValueName) as string;
+                string? legacy = key.GetValue(AppInfo.LegacyRunValueName) as string;
+                string? selected = !string.IsNullOrEmpty(existing) ? existing : legacy;
+                if (!string.IsNullOrEmpty(selected))
                 {
                     string expected = "\"" + AppInfo.ExePath + "\" --autostart";
-                    if (!string.Equals(existing, expected, StringComparison.OrdinalIgnoreCase))
-                    {
-                        key.SetValue(AppInfo.RunValueName, expected);
-                    }
+                    key.SetValue(AppInfo.RunValueName, expected);
+                    key.DeleteValue(AppInfo.LegacyRunValueName, false);
                 }
             }
             catch { }
@@ -525,13 +527,16 @@ namespace LineInTray.WinUI
             try
             {
                 using RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                string expected = "\"" + AppInfo.ExePath + "\" --autostart";
                 if (enabled)
                 {
-                    key.SetValue(AppInfo.RunValueName, "\"" + AppInfo.ExePath + "\" --autostart");
+                    key.SetValue(AppInfo.RunValueName, expected);
+                    key.DeleteValue(AppInfo.LegacyRunValueName, false);
                 }
                 else
                 {
                     key.DeleteValue(AppInfo.RunValueName, false);
+                    key.DeleteValue(AppInfo.LegacyRunValueName, false);
                 }
             }
             catch (Exception ex)
@@ -589,6 +594,7 @@ namespace LineInTray.WinUI
         }
     }
 }
+
 
 
 

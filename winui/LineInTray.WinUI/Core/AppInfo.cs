@@ -10,7 +10,8 @@ namespace LineInTray
         public const string Title = "Audio Output Switcher";
         public const string Version = "1.0.0";
         public const string MutexName = "Local\\LineInTray.SingleInstance";
-        public const string RunValueName = "LineInTray";
+        public const string RunValueName = "AudioOutputSwitcher";
+        public const string LegacyRunValueName = "LineInTray";
 
         private static string _dataDir;
 
@@ -145,5 +146,6 @@ namespace LineInTray
         }
     }
 }
+
 
 
