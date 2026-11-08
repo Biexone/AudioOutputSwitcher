@@ -7,8 +7,8 @@ namespace LineInTray
 {
     internal static class AppInfo
     {
-        public const string Title = "线路输入监听";
-        public const string Version = "2.2.0";
+        public const string Title = "Audio Output Switcher";
+        public const string Version = "1.0.0";
         public const string MutexName = "Local\\LineInTray.SingleInstance";
         public const string RunValueName = "LineInTray";
 
@@ -71,7 +71,7 @@ namespace LineInTray
                 }
                 if (string.IsNullOrEmpty(location))
                 {
-                    location = Path.Combine(Environment.CurrentDirectory, "LineInTrayWinUI.exe");
+                    location = Path.Combine(Environment.CurrentDirectory, "AudioOutputSwitcher.exe");
                 }
                 return location;
             }
@@ -145,4 +145,5 @@ namespace LineInTray
         }
     }
 }
+
 

@@ -1,6 +1,6 @@
-﻿<p align="center"><img src="docs/logo.png" width="112" alt="LineInTray logo"></p>
+﻿<p align="center"><img src="docs/logo.png" width="112" alt="Audio Output Switcher logo"></p>
 
-# LineInTray
+# Audio Output Switcher
 
 [English](README.md) | **简体中文**
 
@@ -32,13 +32,13 @@
 - Windows 11 24H2（build 26100）或更高，Win+A 面板需要。
 - Windows App Runtime 2.5（安装 EncoDeck 等 WinUI 3 应用后通常已有）。
 - 发布包已自包含 .NET 运行时。
-- 如果游戏加加正在运行，请在它的覆盖层设置里排除 `LineInTrayWinUI.exe`。
+- 如果游戏加加正在运行，请在它的覆盖层设置里排除 `AudioOutputSwitcher.exe`。
 
 ## 安装
 
 1. 解压完整文件夹，不要只拿 exe。
 2. 运行 `install-winui.cmd`。
-3. 脚本会复制到 `%LOCALAPPDATA%\Programs\LineInTrayWinUI`，把 exe 设为 Medium 完整性，并创建桌面快捷方式“音频输出快捷切换”。
+3. 脚本会复制到 `%LOCALAPPDATA%\Programs\AudioOutputSwitcher`，把 exe 设为 Medium 完整性，并创建桌面快捷方式“Audio Output Switcher”。
 4. 从桌面快捷方式启动；托盘图标通常在任务栏 `^` 隐藏区。
 
 ## 使用
@@ -62,6 +62,8 @@ powershell -ExecutionPolicy Bypass -File .\build-winui.ps1
 - Windows 没有公开 API 可以把自定义控件嵌入音量弹窗；本程序在 Win+A 快速设置卡片上方显示独立面板，并随系统面板显示/关闭。
 - UI 结构参考 [EncoDeck](https://github.com/TIANLI0/EncoDeck)，实现为本项目原创 WinUI 3 代码。
 - 第三方声明见 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)。
+
+
 
 
 

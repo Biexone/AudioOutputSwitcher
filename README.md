@@ -1,6 +1,6 @@
-﻿<p align="center"><img src="docs/logo.png" width="112" alt="LineInTray logo"></p>
+﻿<p align="center"><img src="docs/logo.png" width="112" alt="Audio Output Switcher logo"></p>
 
-# LineInTray
+# Audio Output Switcher
 
 **English** | [简体中文](README_zh.md)
 
@@ -34,13 +34,13 @@ Unlike a simple “sound output” menu, the shortcuts are always visible: click
 - Windows 11 24H2 (build 26100) or newer for the Win+A companion panel.
 - Windows App Runtime 2.5 (usually installed with EncoDeck or another WinUI 3 app).
 - The release is self-contained for .NET; no separate .NET Desktop Runtime is required.
-- If GamePP (游戏加加) is running, add `LineInTrayWinUI.exe` to its overlay exclusion list. The app no longer uses a signature policy to block third-party overlays.
+- If GamePP (游戏加加) is running, add `AudioOutputSwitcher.exe` to its overlay exclusion list. The app no longer uses a signature policy to block third-party overlays.
 
 ## Install
 
 1. Download the release zip and extract the **whole folder** — the app is not a single-file executable.
 2. Run `install-winui.cmd`.
-3. The script copies the app to `%LOCALAPPDATA%\Programs\LineInTrayWinUI`, marks the exe as Medium integrity, and creates a desktop shortcut named **Audio Output Switcher**.
+3. The script copies the app to `%LOCALAPPDATA%\Programs\AudioOutputSwitcher`, marks the exe as Medium integrity, and creates a desktop shortcut named **Audio Output Switcher**.
 4. Launch it from the shortcut. The tray icon is usually in the taskbar overflow (`^`).
 
 ## Usage
@@ -69,7 +69,8 @@ The script uses `.tools\dotnet` when present, otherwise `dotnet` from `PATH`, an
 
 ## Repository
 
-https://github.com/Biexone/LineInTray
+https://github.com/Biexone/AudioOutputSwitcher
+
 
 
 
