@@ -1,3 +1,5 @@
+﻿<p align="center"><img src="docs/logo.png" width="112" alt="LineInTray logo"></p>
+
 # LineInTray
 
 **English** | [简体中文](README_zh.md)
@@ -64,3 +66,4 @@ The script uses `.tools\dotnet` when present, otherwise `dotnet` from `PATH`, an
 ## Repository
 
 https://github.com/Biexone/LineInTray
+

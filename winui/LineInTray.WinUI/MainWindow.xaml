@@ -13,9 +13,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="52" Height="52" CornerRadius="13" Background="{ThemeResource AccentFillColorDefaultBrush}">
-                        <FontIcon Glyph="&#xE7F5;" FontSize="26" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
-                    </Border>
+                    <Image Width="52" Height="52" Source="ms-appx:///Assets/LineInTray.png" />
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="音频输出快捷切换" FontSize="26" FontWeight="SemiBold" />
                         <TextBlock Text="线路输入监听、输出设备快捷切换" Style="{StaticResource PanelSubtitleTextStyle}" />
@@ -135,6 +133,7 @@
         </ScrollViewer>
     </Grid>
 </Window>
+
 
 
 

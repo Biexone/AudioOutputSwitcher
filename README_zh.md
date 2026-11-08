@@ -1,3 +1,5 @@
+﻿<p align="center"><img src="docs/logo.png" width="112" alt="LineInTray logo"></p>
+
 # LineInTray
 
 [English](README.md) | **简体中文**
@@ -56,3 +58,4 @@ powershell -ExecutionPolicy Bypass -File .\build-winui.ps1
 - Windows 没有公开 API 可以把自定义控件嵌入音量弹窗；本程序在 Win+A 快速设置卡片上方显示独立面板，并随系统面板显示/关闭。
 - UI 结构参考 [EncoDeck](https://github.com/TIANLI0/EncoDeck)，实现为本项目原创 WinUI 3 代码。
 - 第三方声明见 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)。
+

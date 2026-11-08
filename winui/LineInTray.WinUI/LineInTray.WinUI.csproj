@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -6,6 +6,7 @@
     <RootNamespace>LineInTray.WinUI</RootNamespace>
     <AssemblyName>LineInTrayWinUI</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\LineInTray.ico</ApplicationIcon>
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseWinUI>true</UseWinUI>
@@ -26,4 +27,10 @@
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\LineInTray.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\LineInTray.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Assets\LineInTray.ico" LogicalName="LineInTray.WinUI.Assets.LineInTray.ico" />
+  </ItemGroup>
 </Project>
+

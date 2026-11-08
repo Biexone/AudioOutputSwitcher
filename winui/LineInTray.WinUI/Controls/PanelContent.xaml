@@ -12,9 +12,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Border Width="48" Height="48" CornerRadius="12" Background="{ThemeResource AccentFillColorDefaultBrush}">
-                <FontIcon Glyph="&#xE7F5;" FontSize="24" Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
-            </Border>
+            <Image Width="48" Height="48" Source="ms-appx:///Assets/LineInTray.png" />
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                 <TextBlock Text="音频输入" Style="{StaticResource PanelTitleTextStyle}" />
@@ -57,4 +55,5 @@
         </Grid>
     </StackPanel>
 </UserControl>
+
 

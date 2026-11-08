@@ -113,6 +113,23 @@ namespace LineInTray.WinUI
 
         private MenuFlyout? _trayMenu;
 
+        private static System.Drawing.Icon LoadAppIcon()
+        {
+            try
+            {
+                string path = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "LineInTray.ico");
+                if (System.IO.File.Exists(path)) return new System.Drawing.Icon(path);
+            }
+            catch { }
+            try
+            {
+                using System.IO.Stream? stream = typeof(App).Assembly.GetManifestResourceStream("LineInTray.WinUI.Assets.LineInTray.ico");
+                if (stream != null) return new System.Drawing.Icon(stream);
+            }
+            catch { }
+            return System.Drawing.SystemIcons.Application;
+        }
+
         private MenuFlyout BuildTrayMenu()
         {
             MenuFlyout menu = new MenuFlyout();
@@ -138,7 +155,7 @@ namespace LineInTray.WinUI
             _tray = new TaskbarIcon
             {
                 ToolTipText = Loc.T("tray.tooltip"),
-                Icon = System.Drawing.SystemIcons.Application,
+                Icon = LoadAppIcon(),
                 ContextMenuMode = ContextMenuMode.PopupMenu,
                 ContextFlyout = _trayMenu,
                 LeftClickCommand = new RelayCommand(ShowQuickPanel)
@@ -231,6 +248,7 @@ namespace LineInTray.WinUI
         public void Execute(object? parameter) => _action();
     }
 }
+
 
 
 
