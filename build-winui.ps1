@@ -5,10 +5,9 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $project = Join-Path $root 'winui\LineInTray.WinUI\LineInTray.WinUI.csproj'
 $dotnet = Join-Path $root '.tools\dotnet\dotnet.exe'
-if (-not (Test-Path $dotnet)) { $dotnet = (Get-Command dotnet -ErrorAction SilentlyContinue).Source }
-if (-not $dotnet) { throw '需要 .NET 10 SDK（dotnet 或 .tools\dotnet\dotnet.exe）' }
+if (-not (Test-Path $dotnet)) { throw '缺少本地 .NET 10 SDK：.tools\dotnet\dotnet.exe' }
 
-$env:DOTNET_ROOT = Split-Path $dotnet -Parent
+$env:DOTNET_ROOT = Join-Path $root '.tools\dotnet'
 $env:PATH = "$env:DOTNET_ROOT;$env:PATH"
 $env:TMP = Join-Path $root '.tmp'
 $env:TEMP = $env:TMP
@@ -51,6 +50,4 @@ Write-Host "  Output: $out"
 Write-Host "  Exe   : $exe"
 Write-Host "  Size  : $size bytes"
 Write-Host "  SHA256: $hash"
-
-
 

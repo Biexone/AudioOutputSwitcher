@@ -1,4 +1,4 @@
-﻿# LineInTray WinUI 3
+# LineInTray WinUI 3
 
 按 EncoDeck 的 WinUI 3 结构重做的线路输入监听 / **音频输出快捷切换**工具。当前版本 3.0.1。
 
@@ -49,5 +49,4 @@
 powershell -ExecutionPolicy Bypass -File .\build-winui.ps1
 ```
 
-需要 .NET 10 SDK；脚本会优先使用仓库内 `.tools\dotnet`，否则使用 PATH 上的 `dotnet`，发布到 `dist-winui`。
-
+会使用本地 `.tools\dotnet`（.NET 10 SDK）发布到 `dist-winui`。

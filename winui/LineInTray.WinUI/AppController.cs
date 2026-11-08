@@ -27,6 +27,10 @@ namespace LineInTray.WinUI
         private bool _disposed;
         private string _lastError = "";
         private readonly SemaphoreSlim _audioGate = new SemaphoreSlim(1, 1);
+        private readonly object _cacheLock = new object();
+        private List<EndpointInfo> _captureCache = new List<EndpointInfo>();
+        private List<EndpointInfo> _renderCache = new List<EndpointInfo>();
+        private EndpointInfo? _defaultRenderCache;
 
         public AppController(DispatcherQueue dispatcher)
         {
@@ -34,11 +38,12 @@ namespace LineInTray.WinUI
             _settings = Settings.Load();
             _catalog = new AudioEndpointCatalog();
             _presets = PresetStore.Load();
+            RefreshCaches();
             Theme = ParseTheme(_settings.Theme);
             QuickTheme = ParseTheme(_settings.QuickPanelTheme);
             if (_presets.Count == 0)
             {
-                EndpointInfo? output = _catalog.GetDefaultRender();
+                EndpointInfo? output = _defaultRenderCache;
                 if (output != null)
                 {
                     _presets.Add(new AudioPreset
@@ -69,7 +74,7 @@ namespace LineInTray.WinUI
         {
             get
             {
-                EndpointInfo? ep = _catalog.FindCaptureById(_settings.CaptureEndpointId);
+                EndpointInfo? ep = FindEndpoint(_settings.CaptureEndpointId);
                 return ep != null ? ep.FriendlyName : _settings.CaptureNameHint;
             }
         }
@@ -86,34 +91,73 @@ namespace LineInTray.WinUI
 
         public IReadOnlyList<EndpointInfo> CaptureEndpoints()
         {
-            try { return _catalog.GetCaptureEndpoints(true); }
-            catch (Exception ex) { _lastError = ex.Message; return Array.Empty<EndpointInfo>(); }
+            lock (_cacheLock) return new List<EndpointInfo>(_captureCache);
         }
 
         public IReadOnlyList<EndpointInfo> RenderEndpoints()
         {
-            try { return _catalog.GetRenderEndpoints(); }
-            catch (Exception ex) { _lastError = ex.Message; return Array.Empty<EndpointInfo>(); }
+            lock (_cacheLock) return new List<EndpointInfo>(_renderCache);
         }
 
         public EndpointInfo? FindEndpoint(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            try { return _catalog.FindCaptureById(id); }
-            catch { return null; }
+            lock (_cacheLock)
+            {
+                foreach (EndpointInfo endpoint in _captureCache)
+                {
+                    if (string.Equals(endpoint.Id, id, StringComparison.OrdinalIgnoreCase)) return endpoint;
+                }
+            }
+            return null;
         }
 
-        public void RefreshDevices()
+        private EndpointInfo? FindRenderById(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+            lock (_cacheLock)
+            {
+                foreach (EndpointInfo endpoint in _renderCache)
+                {
+                    if (string.Equals(endpoint.Id, id, StringComparison.OrdinalIgnoreCase)) return endpoint;
+                }
+            }
+            return null;
+        }
+
+        private void RefreshCaches()
         {
             try
             {
-                _catalog.Refresh();
-                _lastError = "";
+                List<EndpointInfo> captures = _catalog.GetCaptureEndpoints(true);
+                List<EndpointInfo> renders = _catalog.GetRenderEndpoints();
+                EndpointInfo? defaultRender = _catalog.GetDefaultRender();
+                lock (_cacheLock)
+                {
+                    _captureCache = captures;
+                    _renderCache = renders;
+                    _defaultRenderCache = defaultRender;
+                }
             }
             catch (Exception ex)
             {
                 _lastError = ex.Message;
             }
+        }
+
+        public void RefreshDevices()
+        {
+            _ = RefreshDevicesAsync();
+        }
+
+        private async Task RefreshDevicesAsync()
+        {
+            await Task.Run(() =>
+            {
+                _catalog.Refresh();
+                RefreshCaches();
+                _lastError = "";
+            });
             Notify();
         }
 
@@ -240,7 +284,7 @@ namespace LineInTray.WinUI
             if (preset == null) return;
             try
             {
-                EndpointInfo? endpoint = _catalog.FindRenderById(preset.EndpointId);
+                EndpointInfo? endpoint = FindRenderById(preset.EndpointId);
                 if (endpoint == null)
                 {
                     _lastError = "输出设备不存在：" + preset.Name;
@@ -255,7 +299,8 @@ namespace LineInTray.WinUI
                 }
                 if (preset.SetDefault)
                 {
-                    PolicyConfig.SetDefaultPlayback(endpoint.Id);
+                    string endpointId = endpoint.Id;
+                    await Task.Run(() => PolicyConfig.SetDefaultPlayback(endpointId));
                 }
                 bool wasMonitoring = IsMonitoring;
                 if (wasMonitoring) await StopMonitorAsync();
@@ -374,7 +419,7 @@ namespace LineInTray.WinUI
 
         public string PresetSubtitle(AudioPreset preset)
         {
-            EndpointInfo? ep = _catalog.FindRenderById(preset.EndpointId);
+            EndpointInfo? ep = FindRenderById(preset.EndpointId);
             if (ep == null) return "输出设备当前不可用";
             string text = ep.DisplayName + " · " + ep.StateText;
             if (preset.SetDefault) text += " · 设为默认";
@@ -399,7 +444,7 @@ namespace LineInTray.WinUI
             string current = _settings.PlaybackEndpointId;
             if (string.IsNullOrEmpty(current))
             {
-                current = _catalog.GetDefaultRender()?.Id ?? "";
+                current = _defaultRenderCache?.Id ?? "";
             }
             return string.Equals(preset.EndpointId, current, StringComparison.OrdinalIgnoreCase);
         }
@@ -499,6 +544,9 @@ namespace LineInTray.WinUI
         }
     }
 }
+
+
+
 
 
 
