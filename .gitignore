@@ -1,0 +1,18 @@
+﻿# Build output
+dist-winui/
+**/bin/
+**/obj/
+.tools/
+.nuget/
+.build/
+.appdata/
+.localappdata/
+.dotnet-home/
+.tmp/
+*.zip
+*.exe
+*.dll
+*.pdb
+*.lnk
+LineInTray-data/
+*.log
