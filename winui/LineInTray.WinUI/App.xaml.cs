@@ -42,6 +42,7 @@ namespace LineInTray.WinUI
             DispatcherQueue dispatcher = DispatcherQueue.GetForCurrentThread();
             Controller = new AppController(dispatcher);
             Controller.ThemeChanged += (_, _) => ApplyTheme();
+            Controller.LanguageChanged += ApplyLanguageAll;
             _quickPanel = new QuickPanelWindow(Controller);
 
             CreateTray();
@@ -49,7 +50,11 @@ namespace LineInTray.WinUI
             StartHotkey();
 
             ApplyTheme();
-            if (Array.IndexOf(Environment.GetCommandLineArgs(), "--autostart") < 0)
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "--main") >= 0)
+                {
+                    ShowMainWindow();
+                }
+                else if (Array.IndexOf(Environment.GetCommandLineArgs(), "--autostart") < 0)
                 {
                     _quickPanel.ShowNearTray();
                 }
@@ -106,35 +111,54 @@ namespace LineInTray.WinUI
             _hotkeyTimer.Start();
         }
 
-        private void CreateTray()
+        private MenuFlyout? _trayMenu;
+
+        private MenuFlyout BuildTrayMenu()
         {
             MenuFlyout menu = new MenuFlyout();
-            MenuFlyoutItem open = new MenuFlyoutItem { Text = "打开快捷面板" };
+            MenuFlyoutItem open = new MenuFlyoutItem { Text = Loc.T("tray.openpanel") };
             open.Click += (_, _) => ShowQuickPanel();
-            MenuFlyoutItem main = new MenuFlyoutItem { Text = "打开主界面" };
+            MenuFlyoutItem main = new MenuFlyoutItem { Text = Loc.T("tray.openmain") };
             main.Click += (_, _) => ShowMainWindow();
-            MenuFlyoutItem toggle = new MenuFlyoutItem { Text = "开始/停止监听" };
+            MenuFlyoutItem toggle = new MenuFlyoutItem { Text = Loc.T("tray.toggle") };
             toggle.Click += (_, _) => Controller.ToggleMonitor();
-            MenuFlyoutItem exit = new MenuFlyoutItem { Text = "退出" };
+            MenuFlyoutItem exit = new MenuFlyoutItem { Text = Loc.T("tray.exit") };
             exit.Click += (_, _) => ExitApp();
             menu.Items.Add(open);
             menu.Items.Add(main);
             menu.Items.Add(toggle);
             menu.Items.Add(new MenuFlyoutSeparator());
             menu.Items.Add(exit);
+            return menu;
+        }
 
+        private void CreateTray()
+        {
+            _trayMenu = BuildTrayMenu();
             _tray = new TaskbarIcon
             {
-                ToolTipText = "线路输入监听 - 音频输出快捷切换",
+                ToolTipText = Loc.T("tray.tooltip"),
                 Icon = System.Drawing.SystemIcons.Application,
                 ContextMenuMode = ContextMenuMode.PopupMenu,
-                ContextFlyout = menu,
+                ContextFlyout = _trayMenu,
                 LeftClickCommand = new RelayCommand(ShowQuickPanel)
             };
             _tray.ForceCreate(enablesEfficiencyMode: false);
             Controller.TrayIcon = _tray;
         }
 
+        private void ApplyLanguageAll()
+        {
+            _quickPanel?.ApplyLanguage();
+            _quickSettings?.ApplyLanguage();
+            _main?.ApplyLanguage();
+            _trayMenu = BuildTrayMenu();
+            if (_tray != null)
+            {
+                _tray.ContextFlyout = _trayMenu;
+                _tray.ToolTipText = Loc.T("tray.tooltip");
+            }
+        }
         private void StartQuickSettings()
         {
             if (!QuickSettingsWatcher.IsSupported) return;
@@ -207,6 +231,8 @@ namespace LineInTray.WinUI
         public void Execute(object? parameter) => _action();
     }
 }
+
+
 
 
 

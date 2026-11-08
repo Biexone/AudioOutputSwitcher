@@ -14,6 +14,7 @@ namespace LineInTray
         public bool HotkeyEnabled = true;
         public bool AutoMonitorOnStart = false;
         public string Theme = "system";
+        public string Language = "system";
         public string QuickPanelTheme = "system";
 
         public static Settings Load()
@@ -84,6 +85,7 @@ namespace LineInTray
                 builder.AppendLine();
                 builder.AppendLine("[appearance]");
                 builder.AppendLine("theme=" + Theme);
+                builder.AppendLine("language=" + Language);
                 builder.AppendLine("quick_panel_theme=" + QuickPanelTheme);
                 builder.AppendLine();
                 builder.AppendLine("[meta]");
@@ -177,6 +179,10 @@ namespace LineInTray
             {
                 QuickPanelTheme = value;
             }
+            else if (section == "appearance" && key == "language")
+            {
+                Language = value;
+            }
         }
 
         private static bool ParseBool(string value, bool defaultValue)
@@ -199,4 +205,5 @@ namespace LineInTray
         }
     }
 }
+
 

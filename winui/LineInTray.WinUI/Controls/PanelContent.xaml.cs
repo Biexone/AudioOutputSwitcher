@@ -27,6 +27,7 @@ namespace LineInTray.WinUI.Controls
             ExitButton.Visibility = showClose ? Visibility.Visible : Visibility.Collapsed;
             _app.StateChanged += Refresh;
             _app.PresetsChanged += Refresh;
+            Loc.Apply(this);
             Refresh();
         }
 
@@ -46,6 +47,12 @@ namespace LineInTray.WinUI.Controls
         {
             get => ExitButton.Visibility == Visibility.Visible;
             set => ExitButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public void ApplyLanguage()
+        {
+            Loc.Apply(this);
+            Refresh();
         }
 
         public void Detach()
@@ -69,7 +76,7 @@ namespace LineInTray.WinUI.Controls
             StatusText.Foreground = _app.IsMonitoring ? SuccessBrush() : SecondaryBrush();
 
             bool monitoring = _app.IsMonitoring;
-            MonitorText.Text = monitoring ? "停止监听" : "开始监听";
+            MonitorText.Text = monitoring ? Loc.T("panel.monitor.stop") : Loc.T("panel.monitor.start");
             MonitorIcon.Glyph = monitoring ? "\uE71A" : "\uE768";
             if (monitoring)
             {
@@ -86,7 +93,7 @@ namespace LineInTray.WinUI.Controls
             {
                 PresetList.Children.Add(new TextBlock
                 {
-                    Text = "还没有快捷方式，点击“管理”添加。",
+                    Text = Loc.T("panel.empty"),
                     Foreground = SecondaryBrush(),
                     TextWrapping = TextWrapping.Wrap,
                     Margin = new Thickness(2, 2, 2, 6)
@@ -102,7 +109,7 @@ namespace LineInTray.WinUI.Controls
             {
                 PresetList.Children.Add(new TextBlock
                 {
-                    Text = "提示：多个快捷方式指向同一音频输出，切换不会改变声音。点“管理”修改设备。",
+                    Text = Loc.T("panel.duplicate"),
                     Foreground = SecondaryBrush(),
                     TextWrapping = TextWrapping.Wrap,
                     FontSize = 11,
@@ -150,7 +157,7 @@ namespace LineInTray.WinUI.Controls
             StackPanel text = new StackPanel { Spacing = 1, VerticalAlignment = VerticalAlignment.Center };
             text.Children.Add(new TextBlock
             {
-                Text = string.IsNullOrEmpty(preset.Name) ? "未命名输入" : preset.Name,
+                Text = string.IsNullOrEmpty(preset.Name) ? "Unnamed input" : Loc.Translate(preset.Name),
                 Style = (Style)Application.Current.Resources["BodyStrongTextBlockStyle"],
                 TextTrimming = TextTrimming.CharacterEllipsis
             });
@@ -175,7 +182,7 @@ namespace LineInTray.WinUI.Controls
                 };
                 badge.Child = new TextBlock
                 {
-                    Text = "使用中",
+                    Text = Loc.T("preset.active"),
                     FontSize = 11,
                     Foreground = (Brush)Application.Current.Resources["TextOnAccentFillColorPrimaryBrush"]
                 };
@@ -241,6 +248,8 @@ namespace LineInTray.WinUI.Controls
         private void OnExitClick(object sender, RoutedEventArgs e) => ExitRequested?.Invoke(this, EventArgs.Empty);
     }
 }
+
+
 
 
 

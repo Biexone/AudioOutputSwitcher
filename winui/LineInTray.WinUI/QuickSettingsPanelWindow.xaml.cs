@@ -110,6 +110,13 @@ namespace LineInTray.WinUI
             }
         }
 
+        public void ApplyLanguage()
+        {
+            Loc.Apply(Root);
+            Title = Loc.T("main.title");
+            _content.ApplyLanguage();
+        }
+
         public void Leave()
         {
             if (!_visible || _leaving) return;
@@ -174,6 +181,7 @@ namespace LineInTray.WinUI
         private static double EaseInCubic(double t) => t * t * t;
     }
 }
+
 
 
 

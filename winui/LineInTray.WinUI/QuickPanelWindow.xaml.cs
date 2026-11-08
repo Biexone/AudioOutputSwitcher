@@ -18,6 +18,7 @@ namespace LineInTray.WinUI
         private AppController _app = null!;
         private PanelContent _content = null!;
         private bool _hiding;
+        private DateTime _shownAt;
 
         public QuickPanelWindow()
         {
@@ -66,11 +67,19 @@ namespace LineInTray.WinUI
             Activate();
             WindowInterop.BringToForeground(this);
             IsShown = true;
+            _shownAt = DateTime.UtcNow;
             DispatcherQueue.TryEnqueue(() =>
             {
                 ResizeToContent();
                 AnimateIn();
             });
+        }
+
+        public void ApplyLanguage()
+        {
+            Loc.Apply(Root);
+            Title = Loc.T("main.title");
+            _content.ApplyLanguage();
         }
 
         public void ResizeToContent()
@@ -157,13 +166,16 @@ namespace LineInTray.WinUI
 
         private void OnActivated(object sender, WindowActivatedEventArgs args)
         {
-            if (args.WindowActivationState == WindowActivationState.Deactivated && !_hiding)
+            if (args.WindowActivationState == WindowActivationState.Deactivated && !_hiding
+                && (DateTime.UtcNow - _shownAt).TotalMilliseconds > 500)
             {
                 HidePanel();
             }
         }
     }
 }
+
+
 
 
 

@@ -1,52 +1,66 @@
-# LineInTray WinUI 3
+# LineInTray
 
-按 EncoDeck 的 WinUI 3 结构重做的线路输入监听 / **音频输出快捷切换**工具。当前版本 3.0.1。
+**English** | [简体中文](README_zh.md)
 
-监听始终固定在线路输入；快捷卡片切换的是 **Windows 默认播放设备**（音响、耳机、显示器等），不会改变录音输入。
+A Windows 11 tray utility that keeps **line-in monitoring** running while letting you switch the **default audio output** (speakers, headphones, monitor, ...) from a compact Fluent panel.
 
-| 托盘面板 | Win+A 面板 |
+Unlike a simple “sound output” menu, the shortcuts are always visible: click the tray icon, use `Ctrl+Alt+Shift+L`, or press `Win+A` to open the companion panel directly above Windows Quick Settings.
+
+| Tray panel | Win+A companion panel |
 | --- | --- |
-| ![托盘面板](docs/winui-panel.png) | ![Win+A 面板](docs/winui-quicksettings.png) |
+| ![Tray panel](docs/winui-en-panel.png) | ![Quick Settings panel](docs/winui-en-quicksettings.png) |
 
-主界面：
+![Main window](docs/winui-en-main.png)
 
-![主界面](docs/winui-main.png)
+## Features
 
-## 系统要求
+- **Fixed line-in monitoring** — monitoring always uses the line-in capture device.
+- **Quick output switching** — shortcut cards set the Windows default playback device for all three roles (Console, Multimedia, Communications).
+- **Win+A companion panel** — uses WinEvent hooks on `ControlCenterWindow`, is placed above the Quick Settings cards with the same width, and never takes focus away from the system flyout.
+- **Native Fluent UI** — WinUI 3, Windows App SDK, Acrylic backdrop, Mica main window, Composition animations.
+- **Tray integration** — `H.NotifyIcon.WinUI`; left click opens the panel, right click opens the menu.
+- **Light / dark / system theme** — app theme and quick-panel theme can be chosen separately.
+- **English / 简体中文** — follows the Windows display language by default and can be changed in Settings.
+- **Background audio pipeline** — device enumeration is cached; switching, WASAPI start/stop and default-device changes run off the UI thread.
 
-- Windows 11 24H2（build 26100）或更高，Win+A 面板依赖 `ControlCenterWindow`。
-- .NET 10 Desktop Runtime。
-- Windows App Runtime 2.5（安装 EncoDeck 后通常已经存在）。
-- 如果游戏加加仍在运行，请在游戏加加设置里把 `LineInTrayWinUI.exe` 加入覆盖层排除；这个版本不再用签名策略强行拦截注入。
+## Requirements
 
-## 安装
+- Windows 11 24H2 (build 26100) or newer for the Win+A companion panel.
+- Windows App Runtime 2.5 (usually installed with EncoDeck or another WinUI 3 app).
+- The release is self-contained for .NET; no separate .NET Desktop Runtime is required.
+- If GamePP (游戏加加) is running, add `LineInTrayWinUI.exe` to its overlay exclusion list. The app no longer uses a signature policy to block third-party overlays.
 
-1. 解压整个文件夹，不要只拿 exe。
-2. 双击 `install-winui.cmd`。
-3. 脚本会复制到 `%LOCALAPPDATA%\Programs\LineInTrayWinUI`，把 exe 设为 Medium 完整性，并创建桌面快捷方式“音频输出快捷切换”。
-4. 从桌面快捷方式启动。托盘图标默认在任务栏 `^` 隐藏区。
+## Install
 
-## 功能
+1. Download the release zip and extract the **whole folder** — the app is not a single-file executable.
+2. Run `install-winui.cmd`.
+3. The script copies the app to `%LOCALAPPDATA%\Programs\LineInTrayWinUI`, marks the exe as Medium integrity, and creates a desktop shortcut named **Audio Output Switcher**.
+4. Launch it from the shortcut. The tray icon is usually in the taskbar overflow (`^`).
 
-- 监听输入始终是**线路输入**，不会因为切换快捷卡片而改录音设备。
-- 快捷卡片绑定的是**播放设备**；点击后设置 Windows 默认播放设备（Console/Multimedia/Communications 三个角色），监听正在运行时自动把监听输出切到该设备。
-- 主界面“+ 添加快捷方式”里选择“音频输出”，填写名称（音响、耳机、显示器等）和图标。
-- 如果多个快捷卡片指向同一个输出，面板会提示；新增快捷方式会优先选择尚未使用的输出设备。
-- 设备切换、监听启停和 WASAPI 初始化都在后台串行执行，UI 线程不阻塞。
+## Usage
 
-## UI 结构
+- **Start monitoring** — monitors line-in through the currently selected/default playback device.
+- **Shortcut cards** — click “Speakers” or “Headphones” to change the Windows default output. If monitoring is running, the monitor output follows the new device.
+- **Add shortcut** — main window → “+ Add shortcut” → choose an audio output, name and icon.
+- **Language** — Settings → Language → `Use system language`, `English` or `简体中文`.
+- **Theme** — Settings → App theme / Quick panel theme.
 
-- `QuickPanelWindow`：托盘 Acrylic 面板，360 DIP，圆角、Fluent 卡片。
-- `QuickSettingsPanelWindow`：Win+A 时贴在 Quick Settings 卡片**正上方**、与卡片同宽；`WS_EX_NOACTIVATE`、`WS_EX_TOOLWINDOW`、Acrylic，和系统面板同时出现/关闭。
-- `QuickSettingsWatcher`：`SetWinEventHook` 监听 `ControlCenterWindow` 的显示/隐藏/前台变化，50 ms 跟随卡片区域。
-- 主界面：Mica/Fluent 卡片，主题为跟随系统 / 浅色 / 深色，快捷面板主题可单独设置。
-- 托盘：`H.NotifyIcon.WinUI`；左键打开快捷面板，右键菜单打开主界面/启停监听/退出。
-- 快捷键：`Ctrl+Alt+Shift+L` 打开/关闭托盘快捷面板。
+## Build
 
-## 构建
+Requires the .NET 10 SDK and Windows App SDK 2.5.1 packages.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build-winui.ps1
 ```
 
-会使用本地 `.tools\dotnet`（.NET 10 SDK）发布到 `dist-winui`。
+The script uses `.tools\dotnet` when present, otherwise `dotnet` from `PATH`, and publishes to `dist-winui`.
+
+## Notes
+
+- Windows has no public API for embedding custom controls inside the volume flyout. This project places its own panel above the Win+A Quick Settings cards and shows/hides it together with the system panel.
+- UI structure is inspired by [EncoDeck](https://github.com/TIANLI0/EncoDeck), but the implementation is original WinUI 3 code.
+- Third-party notices are in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
+
+## Repository
+
+https://github.com/Biexone/LineInTray

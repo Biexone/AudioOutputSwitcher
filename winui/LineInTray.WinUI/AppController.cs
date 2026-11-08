@@ -36,6 +36,7 @@ namespace LineInTray.WinUI
         {
             _dispatcher = dispatcher;
             _settings = Settings.Load();
+            Loc.SetLanguage(_settings.Language);
             _catalog = new AudioEndpointCatalog();
             _presets = PresetStore.Load();
             RefreshCaches();
@@ -62,6 +63,7 @@ namespace LineInTray.WinUI
         public event Action? StateChanged;
         public event Action? PresetsChanged;
         public event Action<AppTheme, AppTheme>? ThemeChanged;
+        public event Action? LanguageChanged;
 
         public Settings Settings => _settings;
         public AppTheme Theme { get; private set; }
@@ -70,6 +72,7 @@ namespace LineInTray.WinUI
         public bool IsMonitoring => _monitor != null && _monitor.IsRunning;
         public string LastError => _lastError;
         public string CurrentInputId => _settings.CaptureEndpointId;
+        public string Language => _settings.Language;
         public string CurrentInputName
         {
             get
@@ -83,9 +86,9 @@ namespace LineInTray.WinUI
         {
             get
             {
-                if (IsMonitoring) return "正在监听";
-                if (!string.IsNullOrEmpty(_lastError)) return "错误：" + _lastError;
-                return "未监听";
+                if (IsMonitoring) return Loc.T("status.monitoring");
+                if (!string.IsNullOrEmpty(_lastError)) return Loc.T("status.error") + _lastError;
+                return Loc.T("status.notmonitoring");
             }
         }
 
@@ -204,7 +207,7 @@ namespace LineInTray.WinUI
             EndpointInfo? capture = _catalog.FindCapture(_settings.CaptureEndpointId, _settings.CaptureNameHint);
             if (capture == null)
             {
-                _lastError = "找不到线路输入设备";
+                _lastError = Loc.T("msg.noinput");
                 return;
             }
             if (capture.IsDisabled)
@@ -217,7 +220,7 @@ namespace LineInTray.WinUI
             EndpointInfo? playback = _catalog.ResolvePlayback(_settings.PlaybackEndpointId);
             if (playback == null)
             {
-                _lastError = "找不到播放设备";
+                _lastError = Loc.T("msg.nooutput");
                 return;
             }
 
@@ -230,7 +233,7 @@ namespace LineInTray.WinUI
             _monitor.Faulted += OnMonitorFaulted;
             _monitor.Start();
             _lastError = "";
-            Log.Info("开始监听: " + capture.DisplayName + " -> " + playback.DisplayName);
+            Log.Info(Loc.T("msg.monitorstarted") + ": " + capture.DisplayName + " -> " + playback.DisplayName);
         }
 
         public void StopMonitor()
@@ -264,7 +267,7 @@ namespace LineInTray.WinUI
             _monitor.Dispose();
             _monitor = null;
             _lastError = "";
-            Log.Info("停止监听");
+            Log.Info(Loc.T("msg.monitorstopped"));
         }
 
         private void OnMonitorFaulted(object? sender, AudioMonitorFaultEventArgs args)
@@ -287,13 +290,13 @@ namespace LineInTray.WinUI
                 EndpointInfo? endpoint = FindRenderById(preset.EndpointId);
                 if (endpoint == null)
                 {
-                    _lastError = "输出设备不存在：" + preset.Name;
+                    _lastError = Loc.T("msg.missingoutput") + preset.Name;
                     Notify();
                     return;
                 }
                 if (!endpoint.IsActive)
                 {
-                    _lastError = "输出设备当前不可用：" + endpoint.DisplayName;
+                    _lastError = Loc.T("msg.inactiveoutput") + endpoint.DisplayName;
                     Notify();
                     return;
                 }
@@ -421,8 +424,8 @@ namespace LineInTray.WinUI
         {
             EndpointInfo? ep = FindRenderById(preset.EndpointId);
             if (ep == null) return "输出设备当前不可用";
-            string text = ep.DisplayName + " · " + ep.StateText;
-            if (preset.SetDefault) text += " · 设为默认";
+            string text = ep.DisplayName + " · " + Loc.State(ep.StateText);
+            if (preset.SetDefault) text += " · " + Loc.T("device.default");
             return text;
         }
 
@@ -463,6 +466,15 @@ namespace LineInTray.WinUI
             }
             _settings.Save();
             ThemeChanged?.Invoke(Theme, QuickTheme);
+        }
+
+        public void SetLanguage(string setting)
+        {
+            _settings.Language = string.IsNullOrEmpty(setting) ? "system" : setting;
+            _settings.Save();
+            Loc.SetLanguage(_settings.Language);
+            LanguageChanged?.Invoke();
+            Notify();
         }
 
         public bool IsAutoStartEnabled()
@@ -544,6 +556,8 @@ namespace LineInTray.WinUI
         }
     }
 }
+
+
 
 
 

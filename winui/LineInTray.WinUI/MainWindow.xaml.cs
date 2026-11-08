@@ -25,7 +25,14 @@ namespace LineInTray.WinUI
         {
             try { System.IO.File.AppendAllText(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "lineintray-winui.log"), DateTime.Now + " MainWindow ctor" + Environment.NewLine); } catch { }
             _app = app;
-            Title = "音频输出快捷切换";
+            Loc.Apply(Root);
+            Title = Loc.T("main.title");
+            Root.Loaded += (_, _) =>
+            {
+                Loc.Apply(Root);
+                Refresh();
+                MainScroll.ChangeView(0, 0, null);
+            };
             SystemBackdrop = new MicaBackdrop();
             AppWindow.Resize(new SizeInt32(1000, 820));
             AppWindow.Closing += OnClosing;
@@ -51,9 +58,9 @@ namespace LineInTray.WinUI
             _updating = true;
             try
             {
-                DefaultCaptureText.Text = "Windows 默认录音：" + _app.CurrentInputName;
+                DefaultCaptureText.Text = Loc.T("main.defaultcapture") + _app.CurrentInputName;
                 bool monitoring = _app.IsMonitoring;
-                MonitorText.Text = monitoring ? "停止监听" : "开始监听";
+                MonitorText.Text = monitoring ? Loc.T("panel.monitor.stop") : Loc.T("panel.monitor.start");
                 MonitorIcon.Glyph = monitoring ? "\uE71A" : "\uE768";
                 MonitorButton.Style = (Style)Application.Current.Resources[monitoring ? "DefaultButtonStyle" : "AccentButtonStyle"];
                 StatusText.Text = _app.StatusText;
@@ -74,7 +81,7 @@ namespace LineInTray.WinUI
                 }
                 CaptureCombo.ItemsSource = captures;
                 CaptureCombo.SelectedItem = FindItem(captures, current);
-                DeviceButton.Content = current != null && current.IsActive ? "禁用设备" : "启用设备";
+                DeviceButton.Content = current != null && current.IsActive ? Loc.T("main.device.disable") : Loc.T("main.device.enable");
 
                 List<PlaybackItem> playback = new List<PlaybackItem>();
                 playback.Add(new PlaybackItem(null));
@@ -93,10 +100,12 @@ namespace LineInTray.WinUI
                 }
                 PlaybackCombo.SelectedItem = selectedPlayback ?? playback[0];
 
-                ThemeCombo.ItemsSource = new[] { "跟随系统", "浅色", "深色" };
+                ThemeCombo.ItemsSource = new[] { Loc.T("theme.system"), Loc.T("theme.light"), Loc.T("theme.dark") };
                 ThemeCombo.SelectedIndex = ThemeIndex(_app.Theme);
-                QuickThemeCombo.ItemsSource = new[] { "跟随系统", "浅色", "深色" };
+                QuickThemeCombo.ItemsSource = new[] { Loc.T("theme.system"), Loc.T("theme.light"), Loc.T("theme.dark") };
                 QuickThemeCombo.SelectedIndex = ThemeIndex(_app.QuickTheme);
+                LanguageCombo.ItemsSource = new[] { Loc.T("lang.system"), Loc.T("lang.english"), Loc.T("lang.chinese") };
+                LanguageCombo.SelectedIndex = LanguageIndex(_app.Language);
 
                 PresetList.Children.Clear();
                 foreach (AudioPreset preset in _app.Presets)
@@ -127,6 +136,15 @@ namespace LineInTray.WinUI
             }
             return null;
         }
+
+        private static int LanguageIndex(string language)
+        {
+            if (string.Equals(language, "en-US", StringComparison.OrdinalIgnoreCase) || string.Equals(language, "en", StringComparison.OrdinalIgnoreCase)) return 1;
+            if (string.Equals(language, "zh-CN", StringComparison.OrdinalIgnoreCase) || string.Equals(language, "zh", StringComparison.OrdinalIgnoreCase)) return 2;
+            return 0;
+        }
+
+        private static string LanguageFromIndex(int index) => index == 1 ? "en-US" : index == 2 ? "zh-CN" : "system";
 
         private static int ThemeIndex(AppTheme theme) => theme == AppTheme.Light ? 1 : theme == AppTheme.Dark ? 2 : 0;
 
@@ -167,7 +185,7 @@ namespace LineInTray.WinUI
             StackPanel text = new StackPanel { Spacing = 1, VerticalAlignment = VerticalAlignment.Center };
             text.Children.Add(new TextBlock
             {
-                Text = string.IsNullOrEmpty(preset.Name) ? "未命名输入" : preset.Name,
+                Text = string.IsNullOrEmpty(preset.Name) ? "Unnamed input" : Loc.Translate(preset.Name),
                 Style = (Style)Application.Current.Resources["BodyStrongTextBlockStyle"]
             });
             text.Children.Add(new TextBlock
@@ -183,18 +201,18 @@ namespace LineInTray.WinUI
             {
                 actions.Children.Add(new TextBlock
                 {
-                    Text = "使用中",
+                    Text = Loc.T("preset.active"),
                     Style = (Style)Application.Current.Resources["PanelSubtitleTextStyle"],
                     Foreground = (Brush)Application.Current.Resources["AccentTextFillColorPrimaryBrush"],
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(0, 0, 6, 0)
                 });
             }
-            Button use = new Button { Content = "使用", MinWidth = 0, Padding = new Thickness(10, 4, 10, 4), MinHeight = 0 };
+            Button use = new Button { Content = Loc.T("preset.use"), MinWidth = 0, Padding = new Thickness(10, 4, 10, 4), MinHeight = 0 };
             use.Click += (_, _) => _app.ActivatePreset(preset);
-            Button edit = new Button { Content = "编辑", MinWidth = 0, Padding = new Thickness(10, 4, 10, 4), MinHeight = 0 };
+            Button edit = new Button { Content = Loc.T("preset.edit"), MinWidth = 0, Padding = new Thickness(10, 4, 10, 4), MinHeight = 0 };
             edit.Click += (_, _) => _ = EditPresetAsync(preset);
-            Button delete = new Button { Content = "删除", MinWidth = 0, Padding = new Thickness(10, 4, 10, 4), MinHeight = 0 };
+            Button delete = new Button { Content = Loc.T("preset.delete"), MinWidth = 0, Padding = new Thickness(10, 4, 10, 4), MinHeight = 0 };
             delete.Click += (_, _) => _app.DeletePreset(preset);
             actions.Children.Add(use);
             actions.Children.Add(edit);
@@ -278,6 +296,25 @@ namespace LineInTray.WinUI
             _app.Settings.Save();
         }
 
+        public void ApplyLanguage()
+        {
+            Loc.Apply(Root);
+            Title = Loc.T("main.title");
+            Root.Loaded += (_, _) =>
+            {
+                Loc.Apply(Root);
+                Refresh();
+                MainScroll.ChangeView(0, 0, null);
+            };
+            Refresh();
+        }
+
+        private void OnLanguageChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_updating) return;
+            _app.SetLanguage(LanguageFromIndex(LanguageCombo.SelectedIndex));
+        }
+
         private void OnThemeChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_updating) return;
@@ -299,8 +336,8 @@ namespace LineInTray.WinUI
         {
             AudioPreset preset = existing?.Clone() ?? new AudioPreset { Icon = "builtin:linein", SetDefault = true };
 
-            TextBox name = new TextBox { Header = "名称", Text = preset.Name, PlaceholderText = "例如：耳机 / 音响 / 线路输入" };
-            ComboBox endpoints = new ComboBox { Header = "音频输出", HorizontalAlignment = HorizontalAlignment.Stretch };
+            TextBox name = new TextBox { Header = Loc.T("preset.name"), Text = preset.Name, PlaceholderText = Loc.T("preset.name.hint") };
+            ComboBox endpoints = new ComboBox { Header = Loc.T("preset.output"), HorizontalAlignment = HorizontalAlignment.Stretch };
             List<EndpointItem> items = new List<EndpointItem>();
             foreach (EndpointInfo endpoint in _app.RenderEndpoints())
             {
@@ -329,12 +366,12 @@ namespace LineInTray.WinUI
                 endpoints.SelectedItem = preferred ?? items[0];
             }
 
-            ComboBox icon = new ComboBox { Header = "图标", HorizontalAlignment = HorizontalAlignment.Stretch };
-            string[] names = { "线路输入", "麦克风", "耳机", "音响", "音乐", "游戏", "手机", "AUX" };
+            ComboBox icon = new ComboBox { Header = Loc.T("preset.icon"), HorizontalAlignment = HorizontalAlignment.Stretch };
+            string[] names = { Loc.T("icon.linein"), Loc.T("icon.mic"), Loc.T("icon.headphone"), Loc.T("icon.speaker"), Loc.T("icon.music"), Loc.T("icon.game"), Loc.T("icon.phone"), Loc.T("icon.aux") };
             string[] icons = { "builtin:linein", "builtin:mic", "builtin:headphone", "builtin:speaker", "builtin:music", "builtin:game", "builtin:phone", "builtin:aux" };
             icon.ItemsSource = names;
             icon.SelectedIndex = Math.Max(0, Array.IndexOf(icons, preset.Icon));
-            CheckBox setDefault = new CheckBox { Content = "切换时设为 Windows 默认播放设备", IsChecked = preset.SetDefault };
+            CheckBox setDefault = new CheckBox { Content = Loc.T("preset.default"), IsChecked = preset.SetDefault };
 
             StackPanel content = new StackPanel { Spacing = 10, Width = 360 };
             content.Children.Add(name);
@@ -345,9 +382,9 @@ namespace LineInTray.WinUI
             ContentDialog dialog = new ContentDialog
             {
                 XamlRoot = Root.XamlRoot,
-                Title = existing == null ? "添加快捷方式" : "编辑快捷方式",
-                PrimaryButtonText = "保存",
-                CloseButtonText = "取消",
+                Title = existing == null ? Loc.T("preset.add.title") : Loc.T("preset.edit.title"),
+                PrimaryButtonText = Loc.T("preset.save"),
+                CloseButtonText = Loc.T("preset.cancel"),
                 DefaultButton = ContentDialogButton.Primary,
                 Content = content
             };
@@ -399,16 +436,21 @@ namespace LineInTray.WinUI
     {
         public EndpointItem(EndpointInfo endpoint) => Endpoint = endpoint;
         public EndpointInfo Endpoint { get; }
-        public override string ToString() => Endpoint.DisplayName + " · " + Endpoint.StateText;
+        public override string ToString() => Endpoint.DisplayName + " · " + Loc.State(Endpoint.StateText);
     }
 
     public sealed class PlaybackItem
     {
         public PlaybackItem(EndpointInfo? endpoint) => Endpoint = endpoint;
         public EndpointInfo? Endpoint { get; }
-        public override string ToString() => Endpoint == null ? "默认播放设备" : Endpoint.DisplayName;
+        public override string ToString() => Endpoint == null ? Loc.T("playback.default") : Endpoint.DisplayName;
     }
 }
+
+
+
+
+
 
 
 
