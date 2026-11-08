@@ -37,6 +37,32 @@ namespace LineInTray.WinUI.Interop
         public const int DwmwcpRound = 2;
         public const int DwmwaCloaked = 14;
         public static readonly IntPtr HwndTopmost = new IntPtr(-1);
+        public const uint MfString = 0x00000000;
+        public const uint MfGrayed = 0x00000001;
+        public const uint MfSeparator = 0x00000800;
+        public const uint TpmRightButton = 0x0002;
+        public const uint TpmReturnCmd = 0x0100;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr CreatePopupMenu();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyMenu(IntPtr hMenu);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AppendMenuW(IntPtr hMenu, uint flags, UIntPtr item, string text);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint TrackPopupMenuEx(IntPtr hMenu, uint flags, int x, int y, IntPtr owner, IntPtr parameters);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PostMessage(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Rect
@@ -115,5 +141,9 @@ namespace LineInTray.WinUI.Interop
         }
     }
 }
+
+
+
+
 
 

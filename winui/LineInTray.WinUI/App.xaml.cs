@@ -165,6 +165,45 @@ namespace LineInTray.WinUI
             Controller.TrayIcon = _tray;
         }
 
+        private void ShowNativeTrayMenu()
+        {
+            IntPtr menu = Native.CreatePopupMenu();
+            try
+            {
+                Native.AppendMenuW(menu, Native.MfString, new UIntPtr(1), Loc.T("tray.openpanel"));
+                Native.AppendMenuW(menu, Native.MfString, new UIntPtr(2), Loc.T("tray.openmain"));
+                if (Controller.MonitoringEnabled)
+                {
+                    Native.AppendMenuW(menu, Native.MfString, new UIntPtr(3), Loc.T("tray.toggle"));
+                }
+                Native.AppendMenuW(menu, Native.MfSeparator, UIntPtr.Zero, "");
+                Native.AppendMenuW(menu, Native.MfString, new UIntPtr(4), Loc.T("tray.exit"));
+
+                IntPtr owner = Native.GetForegroundWindow();
+                if (owner == IntPtr.Zero)
+                {
+                    try { if (_quickPanel != null) owner = WindowInterop.GetHandle(_quickPanel); } catch { }
+                }
+                if (owner != IntPtr.Zero) Native.SetForegroundWindow(owner);
+                Native.GetCursorPos(out Native.Point point);
+                uint command = Native.TrackPopupMenuEx(menu,
+                    Native.TpmReturnCmd | Native.TpmRightButton,
+                    point.X, point.Y, owner, IntPtr.Zero);
+                if (owner != IntPtr.Zero) Native.PostMessage(owner, 0, IntPtr.Zero, IntPtr.Zero);
+
+                switch (command)
+                {
+                    case 1: ShowQuickPanel(); break;
+                    case 2: ShowMainWindow(); break;
+                    case 3: Controller.ToggleMonitor(); break;
+                    case 4: ExitApp(); break;
+                }
+            }
+            finally
+            {
+                Native.DestroyMenu(menu);
+            }
+        }
         private void OnMonitoringEnabledChanged()
         {
             _trayMenu = BuildTrayMenu();
@@ -255,6 +294,9 @@ namespace LineInTray.WinUI
         public void Execute(object? parameter) => _action();
     }
 }
+
+
+
 
 
 
