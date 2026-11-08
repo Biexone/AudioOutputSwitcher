@@ -43,6 +43,7 @@ namespace LineInTray.WinUI
             Controller = new AppController(dispatcher);
             Controller.ThemeChanged += (_, _) => ApplyTheme();
             Controller.LanguageChanged += ApplyLanguageAll;
+            Controller.MonitoringEnabledChanged += OnMonitoringEnabledChanged;
             _quickPanel = new QuickPanelWindow(Controller);
 
             CreateTray();
@@ -137,7 +138,7 @@ namespace LineInTray.WinUI
             open.Click += (_, _) => ShowQuickPanel();
             MenuFlyoutItem main = new MenuFlyoutItem { Text = Loc.T("tray.openmain") };
             main.Click += (_, _) => ShowMainWindow();
-            MenuFlyoutItem toggle = new MenuFlyoutItem { Text = Loc.T("tray.toggle") };
+            MenuFlyoutItem toggle = new MenuFlyoutItem { Text = Loc.T("tray.toggle"), IsEnabled = Controller.MonitoringEnabled };
             toggle.Click += (_, _) => Controller.ToggleMonitor();
             MenuFlyoutItem exit = new MenuFlyoutItem { Text = Loc.T("tray.exit") };
             exit.Click += (_, _) => ExitApp();
@@ -162,6 +163,12 @@ namespace LineInTray.WinUI
             };
             _tray.ForceCreate(enablesEfficiencyMode: false);
             Controller.TrayIcon = _tray;
+        }
+
+        private void OnMonitoringEnabledChanged()
+        {
+            _trayMenu = BuildTrayMenu();
+            if (_tray != null) _tray.ContextFlyout = _trayMenu;
         }
 
         private void ApplyLanguageAll()
@@ -248,6 +255,9 @@ namespace LineInTray.WinUI
         public void Execute(object? parameter) => _action();
     }
 }
+
+
+
 
 
 

@@ -14,7 +14,9 @@
 
 ## 功能
 
-- **监听固定线路输入**：快捷卡片不会改变录音设备。
+- **输出切换为主**：快捷卡片是主要功能，关闭监听时仍然可用。
+- **监听可选**：需要时才在主界面勾选“启用线路输入监听”；关闭后不采集音频；Win+A 面板仍会显示，只是隐藏监听部分。
+- **线路输入固定**：开启监听时始终采集线路输入，快捷卡片不会改变录音设备。
 - **快速切换输出**：设置 Windows 默认播放设备的 Console / Multimedia / Communications 三个角色。
 - **Win+A 附加面板**：用 WinEvent 监听 `ControlCenterWindow`，贴在 Quick Settings 卡片正上方、与卡片同宽，不抢系统弹窗焦点。
 - **原生 Fluent UI**：WinUI 3、Windows App SDK、Acrylic 浮层、Mica 主窗口、Composition 动画。
@@ -58,4 +60,7 @@ powershell -ExecutionPolicy Bypass -File .\build-winui.ps1
 - Windows 没有公开 API 可以把自定义控件嵌入音量弹窗；本程序在 Win+A 快速设置卡片上方显示独立面板，并随系统面板显示/关闭。
 - UI 结构参考 [EncoDeck](https://github.com/TIANLI0/EncoDeck)，实现为本项目原创 WinUI 3 代码。
 - 第三方声明见 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)。
+
+
+
 

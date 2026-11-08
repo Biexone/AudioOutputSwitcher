@@ -64,6 +64,7 @@ namespace LineInTray.WinUI
         public event Action? PresetsChanged;
         public event Action<AppTheme, AppTheme>? ThemeChanged;
         public event Action? LanguageChanged;
+        public event Action? MonitoringEnabledChanged;
 
         public Settings Settings => _settings;
         public AppTheme Theme { get; private set; }
@@ -73,6 +74,7 @@ namespace LineInTray.WinUI
         public string LastError => _lastError;
         public string CurrentInputId => _settings.CaptureEndpointId;
         public string Language => _settings.Language;
+        public bool MonitoringEnabled => _settings.MonitoringEnabled;
         public string CurrentInputName
         {
             get
@@ -86,6 +88,7 @@ namespace LineInTray.WinUI
         {
             get
             {
+                if (!MonitoringEnabled) return Loc.T("status.monitoring.disabled");
                 if (IsMonitoring) return Loc.T("status.monitoring");
                 if (!string.IsNullOrEmpty(_lastError)) return Loc.T("status.error") + _lastError;
                 return Loc.T("status.notmonitoring");
@@ -171,6 +174,7 @@ namespace LineInTray.WinUI
 
         private async Task ToggleMonitorAsync()
         {
+            if (!MonitoringEnabled) return;
             if (IsMonitoring) await StopMonitorAsync();
             else await StartMonitorAsync();
         }
@@ -182,7 +186,7 @@ namespace LineInTray.WinUI
 
         private async Task StartMonitorAsync()
         {
-            if (IsMonitoring) return;
+            if (!MonitoringEnabled || IsMonitoring) return;
             await _audioGate.WaitAsync();
             try
             {
@@ -468,6 +472,17 @@ namespace LineInTray.WinUI
             ThemeChanged?.Invoke(Theme, QuickTheme);
         }
 
+        public async Task SetMonitoringEnabledAsync(bool enabled)
+        {
+            if (_settings.MonitoringEnabled == enabled) return;
+            _settings.MonitoringEnabled = enabled;
+            _settings.Save();
+            if (!enabled && IsMonitoring) await StopMonitorAsync();
+            _lastError = "";
+            MonitoringEnabledChanged?.Invoke();
+            Notify();
+        }
+
         public void SetLanguage(string setting)
         {
             _settings.Language = string.IsNullOrEmpty(setting) ? "system" : setting;
@@ -556,6 +571,7 @@ namespace LineInTray.WinUI
         }
     }
 }
+
 
 
 

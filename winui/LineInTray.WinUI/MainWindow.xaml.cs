@@ -27,6 +27,12 @@ namespace LineInTray.WinUI
             _app = app;
             Loc.Apply(Root);
             Title = Loc.T("main.title");
+            try
+            {
+                string iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "LineInTray.ico");
+                if (System.IO.File.Exists(iconPath)) AppWindow.SetIcon(iconPath);
+            }
+            catch { }
             Root.Loaded += (_, _) =>
             {
                 Loc.Apply(Root);
@@ -58,6 +64,9 @@ namespace LineInTray.WinUI
             _updating = true;
             try
             {
+                MonitoringEnabledCheck.IsChecked = _app.MonitoringEnabled;
+                MonitorControls.Visibility = _app.MonitoringEnabled ? Visibility.Visible : Visibility.Collapsed;
+                MonitoringOffText.Visibility = _app.MonitoringEnabled ? Visibility.Collapsed : Visibility.Visible;
                 DefaultCaptureText.Text = Loc.T("main.defaultcapture") + _app.CurrentInputName;
                 bool monitoring = _app.IsMonitoring;
                 MonitorText.Text = monitoring ? Loc.T("panel.monitor.stop") : Loc.T("panel.monitor.start");
@@ -240,6 +249,12 @@ namespace LineInTray.WinUI
             }
         }
 
+        private async void OnMonitoringEnabledClick(object sender, RoutedEventArgs e)
+        {
+            if (_updating) return;
+            await _app.SetMonitoringEnabledAsync(MonitoringEnabledCheck.IsChecked == true);
+        }
+
         private void OnMonitorClick(object sender, RoutedEventArgs e) => _app.ToggleMonitor();
 
         private void OnCaptureChanged(object sender, SelectionChangedEventArgs e)
@@ -300,6 +315,12 @@ namespace LineInTray.WinUI
         {
             Loc.Apply(Root);
             Title = Loc.T("main.title");
+            try
+            {
+                string iconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets", "LineInTray.ico");
+                if (System.IO.File.Exists(iconPath)) AppWindow.SetIcon(iconPath);
+            }
+            catch { }
             Root.Loaded += (_, _) =>
             {
                 Loc.Apply(Root);
@@ -446,6 +467,8 @@ namespace LineInTray.WinUI
         public override string ToString() => Endpoint == null ? Loc.T("playback.default") : Endpoint.DisplayName;
     }
 }
+
+
 
 
 

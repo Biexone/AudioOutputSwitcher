@@ -29,7 +29,7 @@ namespace LineInTray.WinUI
             Add("theme.system", "跟随系统", "Use system");
             Add("theme.light", "浅色", "Light");
             Add("theme.dark", "深色", "Dark");
-            Add("panel.title", "音频输入", "Audio Input");
+            Add("panel.title", "音频输出", "Audio Output");
             Add("panel.monitor.start", "开始监听", "Start monitoring");
             Add("panel.monitor.stop", "停止监听", "Stop monitoring");
             Add("panel.section.quick", "快速切换", "Quick switch");
@@ -41,7 +41,7 @@ namespace LineInTray.WinUI
             Add("panel.empty", "还没有快捷方式，点击“管理”添加。", "No shortcuts yet. Click Manage to add one.");
             Add("panel.duplicate", "提示：多个快捷方式指向同一音频输出，切换不会改变声音。点“管理”修改设备。", "Note: multiple shortcuts point to the same output; switching them will not change the sound. Use Manage to edit them.");
             Add("main.title", "音频输出快捷切换", "Audio Output Switcher");
-            Add("main.subtitle", "线路输入监听、输出设备快捷切换", "Line-in monitoring and quick output switching");
+            Add("main.subtitle", "音频输出快捷切换，线路输入监听可选", "Quick output switching with optional line-in monitoring");
             Add("main.openpanel", "打开快捷面板", "Open quick panel");
             Add("main.exit", "退出", "Exit");
             Add("main.monitor", "监听控制", "Monitoring");
@@ -65,8 +65,12 @@ namespace LineInTray.WinUI
             Add("main.data", "打开数据目录", "Open data folder");
             Add("main.log", "查看日志", "View log");
             Add("main.tray", "显示托盘图标", "Show tray icon");
-            Add("main.note", "提示：Windows 没有公开 API 可以把自定义控件插入音量弹窗；本程序会在 Win+A 快速设置卡片上方显示独立面板，并且与系统面板同步出现和关闭。", "Note: Windows has no public API for embedding custom controls in the volume flyout. This app places its own panel above the Win+A Quick Settings cards and shows/hides it together with the system panel.");
+            Add("main.note", "提示：Windows 没有公开 API 可以把自定义控件插入音量弹窗；Win+A 面板始终显示快速切换，启用监听后才会多出监听控制。", "Note: Windows has no public API for embedding custom controls in the volume flyout. The Win+A panel always shows quick switching; monitoring controls appear only when monitoring is enabled.");
             Add("status.monitoring", "正在监听", "Monitoring");
+            Add("status.monitoring.disabled", "监听功能已关闭", "Monitoring is off");
+            Add("panel.monitoring.disabled", "线路输入监听已关闭", "Line-in monitoring is off");
+            Add("main.monitoring.enable", "启用线路输入监听", "Enable line-in monitoring");
+            Add("main.monitoring.off", "监听功能已关闭。快速切换和 Win+A 面板仍然可用。", "Monitoring is off. Quick switching and the Win+A panel are still available.");
             Add("status.notmonitoring", "未监听", "Not monitoring");
             Add("status.error", "错误：", "Error: ");
             Add("status.monitor.on", "监听中", "Live");
@@ -195,4 +199,9 @@ namespace LineInTray.WinUI
         }
     }
 }
+
+
+
+
+
 

@@ -13,6 +13,7 @@ namespace LineInTray
         public int LatencyMs = 120;
         public bool HotkeyEnabled = true;
         public bool AutoMonitorOnStart = false;
+        public bool MonitoringEnabled = true;
         public string Theme = "system";
         public string Language = "system";
         public string QuickPanelTheme = "system";
@@ -82,6 +83,7 @@ namespace LineInTray
                 builder.AppendLine("latency_ms=" + LatencyMs.ToString(CultureInfo.InvariantCulture));
                 builder.AppendLine("hotkey_enabled=" + (HotkeyEnabled ? "1" : "0"));
                 builder.AppendLine("auto_monitor_on_start=" + (AutoMonitorOnStart ? "1" : "0"));
+                builder.AppendLine("monitoring_enabled=" + (MonitoringEnabled ? "1" : "0"));
                 builder.AppendLine();
                 builder.AppendLine("[appearance]");
                 builder.AppendLine("theme=" + Theme);
@@ -171,6 +173,10 @@ namespace LineInTray
             {
                 AutoMonitorOnStart = ParseBool(value, false);
             }
+            else if (section == "behavior" && key == "monitoring_enabled")
+            {
+                MonitoringEnabled = ParseBool(value, true);
+            }
             else if (section == "appearance" && key == "theme")
             {
                 Theme = value;
@@ -205,5 +211,7 @@ namespace LineInTray
         }
     }
 }
+
+
 
 

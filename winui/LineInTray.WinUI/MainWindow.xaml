@@ -16,7 +16,7 @@
                     <Image Width="52" Height="52" Source="ms-appx:///Assets/LineInTray.png" />
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="音频输出快捷切换" FontSize="26" FontWeight="SemiBold" />
-                        <TextBlock Text="线路输入监听、输出设备快捷切换" Style="{StaticResource PanelSubtitleTextStyle}" />
+                        <TextBlock Text="音频输出快捷切换，线路输入监听可选" Style="{StaticResource PanelSubtitleTextStyle}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <Button Content="打开快捷面板" Click="OnOpenPanelClick" />
@@ -26,64 +26,70 @@
 
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="监听控制" Style="{StaticResource SectionHeaderTextStyle}" />
-                        <TextBlock x:Name="DefaultCaptureText" Style="{StaticResource PanelSubtitleTextStyle}" />
-                        <Grid ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Button x:Name="MonitorButton" Height="38" MinWidth="150" Style="{StaticResource AccentButtonStyle}" Click="OnMonitorClick">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon x:Name="MonitorIcon" Glyph="&#xE768;" FontSize="15" />
-                                    <TextBlock x:Name="MonitorText" Text="开始监听" />
-                                </StackPanel>
-                            </Button>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <TextBlock x:Name="StatusText" Text="未监听" Style="{StaticResource PanelSubtitleTextStyle}" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                <TextBlock Text="延迟" Style="{StaticResource PanelSubtitleTextStyle}" />
-                                <NumberBox x:Name="LatencyBox" Width="92" Minimum="50" Maximum="500" SmallChange="10" SpinButtonPlacementMode="Compact" ValueChanged="OnLatencyChanged" />
-                                <TextBlock Text="ms" Style="{StaticResource PanelSubtitleTextStyle}" />
-                            </StackPanel>
+                        <Grid>
+                            <TextBlock Text="快速切换音频输出" Style="{StaticResource SectionHeaderTextStyle}" VerticalAlignment="Center" />
+                            <Button Content="+ 添加快捷方式" HorizontalAlignment="Right" Style="{StaticResource AccentButtonStyle}" Click="OnAddPresetClick" />
                         </Grid>
-                        <Grid ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="录音设备" VerticalAlignment="Center" Style="{StaticResource PanelSubtitleTextStyle}" />
-                            <ComboBox x:Name="CaptureCombo" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnCaptureChanged" />
-                            <Button x:Name="DeviceButton" Grid.Column="2" Content="启用/禁用" Click="OnToggleDeviceClick" />
-                        </Grid>
-                        <Grid ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="140" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="播放到" VerticalAlignment="Center" Style="{StaticResource PanelSubtitleTextStyle}" />
-                            <ComboBox x:Name="PlaybackCombo" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnPlaybackChanged" />
-                            <Button Grid.Column="2" Content="刷新设备" Click="OnRefreshClick" />
-                        </Grid>
-                        <StackPanel Orientation="Horizontal" Spacing="20">
-                            <CheckBox x:Name="AutoStartCheck" Content="开机自动启动" Click="OnAutoStartClick" />
-                            <CheckBox x:Name="AutoMonitorCheck" Content="启动时自动监听" Click="OnAutoMonitorClick" />
-                        </StackPanel>
+                        <StackPanel x:Name="PresetList" Spacing="8" />
                     </StackPanel>
                 </Border>
 
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <StackPanel Spacing="12">
                         <Grid>
-                            <TextBlock Text="快速切换音频输出" Style="{StaticResource SectionHeaderTextStyle}" VerticalAlignment="Center" />
-                            <Button Content="+ 添加快捷方式" HorizontalAlignment="Right" Style="{StaticResource AccentButtonStyle}" Click="OnAddPresetClick" />
+                            <TextBlock Text="监听控制" Style="{StaticResource SectionHeaderTextStyle}" VerticalAlignment="Center" />
+                            <CheckBox x:Name="MonitoringEnabledCheck" Content="启用线路输入监听" HorizontalAlignment="Right" VerticalAlignment="Center" Click="OnMonitoringEnabledClick" />
                         </Grid>
-                        <StackPanel x:Name="PresetList" Spacing="8" />
+                        <TextBlock x:Name="MonitoringOffText" Text="监听功能已关闭。快速切换和 Win+A 面板仍然可用。" Style="{StaticResource PanelSubtitleTextStyle}" TextWrapping="Wrap" Visibility="Collapsed" />
+                        <StackPanel x:Name="MonitorControls" Spacing="12">
+                            <TextBlock x:Name="DefaultCaptureText" Style="{StaticResource PanelSubtitleTextStyle}" />
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="MonitorButton" Height="38" MinWidth="150" Style="{StaticResource AccentButtonStyle}" Click="OnMonitorClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon x:Name="MonitorIcon" Glyph="&#xE768;" FontSize="15" />
+                                        <TextBlock x:Name="MonitorText" Text="开始监听" />
+                                    </StackPanel>
+                                </Button>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    <TextBlock x:Name="StatusText" Text="未监听" Style="{StaticResource PanelSubtitleTextStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="延迟" Style="{StaticResource PanelSubtitleTextStyle}" />
+                                    <NumberBox x:Name="LatencyBox" Width="92" Minimum="50" Maximum="500" SmallChange="10" SpinButtonPlacementMode="Compact" ValueChanged="OnLatencyChanged" />
+                                    <TextBlock Text="ms" Style="{StaticResource PanelSubtitleTextStyle}" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="录音设备" VerticalAlignment="Center" Style="{StaticResource PanelSubtitleTextStyle}" />
+                                <ComboBox x:Name="CaptureCombo" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnCaptureChanged" />
+                                <Button x:Name="DeviceButton" Grid.Column="2" Content="启用/禁用" Click="OnToggleDeviceClick" />
+                            </Grid>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="播放到" VerticalAlignment="Center" Style="{StaticResource PanelSubtitleTextStyle}" />
+                                <ComboBox x:Name="PlaybackCombo" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnPlaybackChanged" />
+                                <Button Grid.Column="2" Content="刷新设备" Click="OnRefreshClick" />
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="20">
+                                <CheckBox x:Name="AutoStartCheck" Content="开机自动启动" Click="OnAutoStartClick" />
+                                <CheckBox x:Name="AutoMonitorCheck" Content="启动时自动监听" Click="OnAutoMonitorClick" />
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
 
@@ -125,7 +131,7 @@
                             <Button Content="查看日志" Click="OnOpenLogClick" />
                             <Button Content="显示托盘图标" Click="OnReassertTrayClick" />
                         </StackPanel>
-                        <TextBlock Text="提示：Windows 没有公开 API 可以把自定义控件插入音量弹窗；本程序会在 Win+A 快速设置卡片上方显示独立面板，并且与系统面板同步出现和关闭。"
+                        <TextBlock Text="提示：Windows 没有公开 API 可以把自定义控件插入音量弹窗；Win+A 面板始终显示快速切换，启用监听后才会多出监听控制。"
                                    Style="{StaticResource PanelSubtitleTextStyle}" TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
@@ -133,6 +139,9 @@
         </ScrollViewer>
     </Grid>
 </Window>
+
+
+
 
 
 

@@ -16,7 +16,9 @@ Unlike a simple “sound output” menu, the shortcuts are always visible: click
 
 ## Features
 
-- **Fixed line-in monitoring** — monitoring always uses the line-in capture device.
+- **Output switching first** — the quick-switch cards are the primary feature and remain available even when monitoring is off.
+- **Optional monitoring** — enable “Line-in monitoring” in the main window only when you need it. When it is off, the Win+A companion panel still opens for output switching; only its monitoring section is hidden, and no audio is captured.
+- **Fixed line-in source** — when monitoring is enabled, it always uses the line-in capture device.
 - **Quick output switching** — shortcut cards set the Windows default playback device for all three roles (Console, Multimedia, Communications).
 - **Win+A companion panel** — uses WinEvent hooks on `ControlCenterWindow`, is placed above the Quick Settings cards with the same width, and never takes focus away from the system flyout.
 - **Native Fluent UI** — WinUI 3, Windows App SDK, Acrylic backdrop, Mica main window, Composition animations.
@@ -66,4 +68,7 @@ The script uses `.tools\dotnet` when present, otherwise `dotnet` from `PATH`, an
 ## Repository
 
 https://github.com/Biexone/LineInTray
+
+
+
 

@@ -15,7 +15,7 @@
             <Image Width="48" Height="48" Source="ms-appx:///Assets/LineInTray.png" />
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                <TextBlock Text="音频输入" Style="{StaticResource PanelTitleTextStyle}" />
+                <TextBlock Text="音频输出" Style="{StaticResource PanelTitleTextStyle}" />
                 <TextBlock x:Name="StatusText" Text="线路输入 · 未监听" Style="{StaticResource PanelSubtitleTextStyle}" />
             </StackPanel>
 
@@ -55,5 +55,6 @@
         </Grid>
     </StackPanel>
 </UserControl>
+
 
 

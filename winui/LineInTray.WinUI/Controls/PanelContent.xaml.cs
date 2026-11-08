@@ -71,8 +71,12 @@ namespace LineInTray.WinUI.Controls
                 return;
             }
 
-            string status = _app.IsMonitoring ? "正在监听" : _app.StatusText;
-            StatusText.Text = _app.CurrentInputName + " · " + status;
+            bool monitoringEnabled = _app.MonitoringEnabled;
+            MonitorButton.Visibility = monitoringEnabled ? Visibility.Visible : Visibility.Collapsed;
+            StatusText.Visibility = monitoringEnabled ? Visibility.Visible : Visibility.Collapsed;
+            StatusText.Text = monitoringEnabled
+                ? _app.CurrentInputName + " · " + _app.StatusText
+                : Loc.T("panel.monitoring.disabled");
             StatusText.Foreground = _app.IsMonitoring ? SuccessBrush() : SecondaryBrush();
 
             bool monitoring = _app.IsMonitoring;
@@ -248,6 +252,8 @@ namespace LineInTray.WinUI.Controls
         private void OnExitClick(object sender, RoutedEventArgs e) => ExitRequested?.Invoke(this, EventArgs.Empty);
     }
 }
+
+
 
 
 
