@@ -51,6 +51,10 @@ namespace LineInTray.WinUI
             StartHotkey();
 
             ApplyTheme();
+            if (Controller.Settings.AutoMonitorOnStart && Controller.MonitoringEnabled)
+            {
+                Controller.StartMonitor();
+            }
             if (Array.IndexOf(Environment.GetCommandLineArgs(), "--main") >= 0)
                 {
                     ShowMainWindow();
@@ -134,14 +138,10 @@ namespace LineInTray.WinUI
         private MenuFlyout BuildTrayMenu()
         {
             MenuFlyout menu = new MenuFlyout();
-            MenuFlyoutItem open = new MenuFlyoutItem { Text = Loc.T("tray.openpanel") };
-            open.Click += (_, _) => ShowQuickPanel();
-            MenuFlyoutItem main = new MenuFlyoutItem { Text = Loc.T("tray.openmain") };
-            main.Click += (_, _) => ShowMainWindow();
-            MenuFlyoutItem toggle = new MenuFlyoutItem { Text = Loc.T("tray.toggle"), IsEnabled = Controller.MonitoringEnabled };
-            toggle.Click += (_, _) => Controller.ToggleMonitor();
-            MenuFlyoutItem exit = new MenuFlyoutItem { Text = Loc.T("tray.exit") };
-            exit.Click += (_, _) => ExitApp();
+            MenuFlyoutItem open = new MenuFlyoutItem { Text = Loc.T("tray.openpanel"), Command = new RelayCommand(ShowQuickPanel) };
+            MenuFlyoutItem main = new MenuFlyoutItem { Text = Loc.T("tray.openmain"), Command = new RelayCommand(ShowMainWindow) };
+            MenuFlyoutItem toggle = new MenuFlyoutItem { Text = Loc.T("tray.toggle"), IsEnabled = Controller.MonitoringEnabled, Command = new RelayCommand(Controller.ToggleMonitor) };
+            MenuFlyoutItem exit = new MenuFlyoutItem { Text = Loc.T("tray.exit"), Command = new RelayCommand(ExitApp) };
             menu.Items.Add(open);
             menu.Items.Add(main);
             menu.Items.Add(toggle);
@@ -255,6 +255,8 @@ namespace LineInTray.WinUI
         public void Execute(object? parameter) => _action();
     }
 }
+
+
 
 
 

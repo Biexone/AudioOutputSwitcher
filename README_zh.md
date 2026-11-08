@@ -24,6 +24,8 @@
 - **主题**：跟随系统 / 浅色 / 深色，主界面和快捷面板可分别设置。
 - **中英文**：默认跟随 Windows 显示语言，也可在设置中切换 English / 简体中文。
 - **后台音频**：设备列表缓存；切换输出、启停监听、WASAPI 初始化都在 UI 线程外执行。
+- **开机自启动**：在“其他”卡片里勾选，会写入当前用户 Run 注册表项。
+- **默认零延迟**：监听延迟默认 0 ms，可调 0–500 ms。
 
 ## 系统要求
 
@@ -60,6 +62,8 @@ powershell -ExecutionPolicy Bypass -File .\build-winui.ps1
 - Windows 没有公开 API 可以把自定义控件嵌入音量弹窗；本程序在 Win+A 快速设置卡片上方显示独立面板，并随系统面板显示/关闭。
 - UI 结构参考 [EncoDeck](https://github.com/TIANLI0/EncoDeck)，实现为本项目原创 WinUI 3 代码。
 - 第三方声明见 [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)。
+
+
 
 
 

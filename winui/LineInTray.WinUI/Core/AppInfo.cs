@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace LineInTray
 {
@@ -59,10 +60,18 @@ namespace LineInTray
         {
             get
             {
-                string location = Assembly.GetExecutingAssembly().Location;
+                string location = Environment.ProcessPath ?? "";
                 if (string.IsNullOrEmpty(location))
                 {
-                    location = Path.Combine(Environment.CurrentDirectory, "LineInTray.exe");
+                    try { location = Process.GetCurrentProcess().MainModule?.FileName ?? ""; } catch { }
+                }
+                if (string.IsNullOrEmpty(location))
+                {
+                    location = Assembly.GetExecutingAssembly().Location;
+                }
+                if (string.IsNullOrEmpty(location))
+                {
+                    location = Path.Combine(Environment.CurrentDirectory, "LineInTrayWinUI.exe");
                 }
                 return location;
             }
@@ -136,3 +145,4 @@ namespace LineInTray
         }
     }
 }
+

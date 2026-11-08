@@ -10,7 +10,7 @@ namespace LineInTray
         public string CaptureEndpointId = "";
         public string CaptureNameHint = "线路输入";
         public string PlaybackEndpointId = "";
-        public int LatencyMs = 120;
+        public int LatencyMs = 0;
         public bool HotkeyEnabled = true;
         public bool AutoMonitorOnStart = false;
         public bool MonitoringEnabled = true;
@@ -133,9 +133,9 @@ namespace LineInTray
             {
                 CaptureNameHint = "线路输入";
             }
-            if (LatencyMs < 50)
+            if (LatencyMs < 0)
             {
-                LatencyMs = 50;
+                LatencyMs = 0;
             }
             if (LatencyMs > 500)
             {
@@ -211,6 +211,7 @@ namespace LineInTray
         }
     }
 }
+
 
 
 

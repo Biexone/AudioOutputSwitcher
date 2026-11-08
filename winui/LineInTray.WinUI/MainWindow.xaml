@@ -61,7 +61,7 @@
                                 </StackPanel>
                                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                     <TextBlock Text="延迟" Style="{StaticResource PanelSubtitleTextStyle}" />
-                                    <NumberBox x:Name="LatencyBox" Width="92" Minimum="50" Maximum="500" SmallChange="10" SpinButtonPlacementMode="Compact" ValueChanged="OnLatencyChanged" />
+                                    <NumberBox x:Name="LatencyBox" Width="92" Minimum="0" Maximum="500" SmallChange="10" SpinButtonPlacementMode="Compact" ValueChanged="OnLatencyChanged" />
                                     <TextBlock Text="ms" Style="{StaticResource PanelSubtitleTextStyle}" />
                                 </StackPanel>
                             </Grid>
@@ -86,7 +86,6 @@
                                 <Button Grid.Column="2" Content="刷新设备" Click="OnRefreshClick" />
                             </Grid>
                             <StackPanel Orientation="Horizontal" Spacing="20">
-                                <CheckBox x:Name="AutoStartCheck" Content="开机自动启动" Click="OnAutoStartClick" />
                                 <CheckBox x:Name="AutoMonitorCheck" Content="启动时自动监听" Click="OnAutoMonitorClick" />
                             </StackPanel>
                         </StackPanel>
@@ -125,6 +124,7 @@
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <StackPanel Spacing="12">
                         <TextBlock Text="其他" Style="{StaticResource SectionHeaderTextStyle}" />
+                        <CheckBox x:Name="AutoStartCheck" Content="开机自动启动" Click="OnAutoStartClick" />
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Button Content="打开 Windows 声音设置" Click="OnOpenSoundClick" />
                             <Button Content="打开数据目录" Click="OnOpenDataClick" />
@@ -139,6 +139,8 @@
         </ScrollViewer>
     </Grid>
 </Window>
+
+
 
 
 

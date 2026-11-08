@@ -36,6 +36,7 @@ namespace LineInTray.WinUI
         {
             _dispatcher = dispatcher;
             _settings = Settings.Load();
+            RepairAutoStartPath();
             Loc.SetLanguage(_settings.Language);
             _catalog = new AudioEndpointCatalog();
             _presets = PresetStore.Load();
@@ -380,7 +381,7 @@ namespace LineInTray.WinUI
 
         private async Task SetLatencyAsync(int milliseconds)
         {
-            _settings.LatencyMs = Math.Clamp(milliseconds, 50, 500);
+            _settings.LatencyMs = Math.Clamp(milliseconds, 0, 500);
             _settings.Save();
             if (IsMonitoring)
             {
@@ -492,6 +493,23 @@ namespace LineInTray.WinUI
             Notify();
         }
 
+        private void RepairAutoStartPath()
+        {
+            try
+            {
+                using RegistryKey? key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                if (key?.GetValue(AppInfo.RunValueName) is string existing && !string.IsNullOrEmpty(existing))
+                {
+                    string expected = "\"" + AppInfo.ExePath + "\" --autostart";
+                    if (!string.Equals(existing, expected, StringComparison.OrdinalIgnoreCase))
+                    {
+                        key.SetValue(AppInfo.RunValueName, expected);
+                    }
+                }
+            }
+            catch { }
+        }
+
         public bool IsAutoStartEnabled()
         {
             try
@@ -571,6 +589,8 @@ namespace LineInTray.WinUI
         }
     }
 }
+
+
 
 
 

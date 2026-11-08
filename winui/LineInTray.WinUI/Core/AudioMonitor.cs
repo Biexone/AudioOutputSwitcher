@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
@@ -55,7 +55,7 @@ namespace LineInTray
 
             _captureDevice = captureDevice;
             _playbackDevice = playbackDevice;
-            _latencyMs = latencyMs < 50 ? 50 : (latencyMs > 500 ? 500 : latencyMs);
+            _latencyMs = latencyMs < 0 ? 0 : (latencyMs > 500 ? 500 : latencyMs);
             _captureId = captureDevice.ID;
             _playbackId = playbackDevice.ID;
         }
@@ -369,3 +369,4 @@ namespace LineInTray
         }
     }
 }
+
