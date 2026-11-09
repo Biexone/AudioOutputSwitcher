@@ -5,8 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="音频输出快捷切换">
     <Grid x:Name="Root">
-        <ScrollViewer x:Name="MainScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Padding="28,24,28,28" Spacing="16" MaxWidth="900" HorizontalAlignment="Stretch">
+        <ScrollViewer x:Name="MainScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Center">
+            <StackPanel Padding="28,24,28,28" Spacing="16" MaxWidth="900" HorizontalAlignment="Center">
                 <Grid ColumnSpacing="14" Margin="0,0,0,4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="52" />
@@ -28,7 +28,12 @@
                     <StackPanel Spacing="12">
                         <Grid>
                             <TextBlock Text="快速切换音频输出" Style="{StaticResource SectionHeaderTextStyle}" VerticalAlignment="Center" />
-                            <Button Content="+ 添加快捷方式" HorizontalAlignment="Right" Style="{StaticResource AccentButtonStyle}" Click="OnAddPresetClick" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource PanelIconButtonStyle}" Click="OnRefreshClick" ToolTipService.ToolTip="刷新设备">
+                                    <FontIcon Glyph="&#xE72C;" FontSize="14" />
+                                </Button>
+                                <Button Content="+ 添加快捷方式" Style="{StaticResource AccentButtonStyle}" Click="OnAddPresetClick" />
+                            </StackPanel>
                         </Grid>
                         <StackPanel x:Name="PresetList" Spacing="8" />
                     </StackPanel>
@@ -94,6 +99,28 @@
 
                 <Border Style="{StaticResource SettingsCardStyle}">
                     <StackPanel Spacing="12">
+                        <TextBlock Text="快捷键" Style="{StaticResource SectionHeaderTextStyle}" />
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="260" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="切换音频输出" VerticalAlignment="Center" Style="{StaticResource PanelSubtitleTextStyle}" />
+                            <TextBox x:Name="OutputHotkeyBox" Grid.Column="1" IsReadOnly="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" PlaceholderText="Ctrl+Alt+Shift+O" KeyDown="OnHotkeyBoxKeyDown" />
+                        </Grid>
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="260" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="开关音频监听" VerticalAlignment="Center" Style="{StaticResource PanelSubtitleTextStyle}" />
+                            <TextBox x:Name="MonitorHotkeyBox" Grid.Column="1" IsReadOnly="True" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" PlaceholderText="Ctrl+Alt+Shift+M" KeyDown="OnHotkeyBoxKeyDown" />
+                        </Grid>
+                        <TextBlock Text="点击输入框后按下组合键；Backspace/Delete 清除。" Style="{StaticResource PanelSubtitleTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SettingsCardStyle}">
+                    <StackPanel Spacing="12">
                         <TextBlock Text="外观" Style="{StaticResource SectionHeaderTextStyle}" />
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
@@ -139,6 +166,8 @@
         </ScrollViewer>
     </Grid>
 </Window>
+
+
 
 
 

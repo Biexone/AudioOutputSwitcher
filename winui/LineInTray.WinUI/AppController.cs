@@ -282,6 +282,28 @@ namespace LineInTray.WinUI
             _dispatcher.TryEnqueue(Notify);
         }
 
+        public void CycleOutputPreset()
+        {
+            if (_presets.Count == 0) return;
+            int current = -1;
+            for (int i = 0; i < _presets.Count; i++)
+            {
+                if (IsPresetActive(_presets[i]))
+                {
+                    current = i;
+                    break;
+                }
+            }
+            int next = current < 0 ? 0 : (current + 1) % _presets.Count;
+            ActivatePreset(_presets[next]);
+        }
+
+        public void SetHotkeys(string output, string monitor)
+        {
+            _settings.HotkeySwitchOutput = output ?? "";
+            _settings.HotkeyToggleMonitor = monitor ?? "";
+            _settings.Save();
+        }
         public void ActivatePreset(AudioPreset preset)
         {
             _ = ActivatePresetAsync(preset);
@@ -594,6 +616,7 @@ namespace LineInTray.WinUI
         }
     }
 }
+
 
 
 

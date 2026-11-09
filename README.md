@@ -27,6 +27,8 @@ Unlike a simple “sound output” menu, the shortcuts are always visible: click
 - **English / 简体中文** — follows the Windows display language by default and can be changed in Settings.
 - **Background audio pipeline** — device enumeration is cached; switching, WASAPI start/stop and default-device changes run off the UI thread.
 - **Optional Start with Windows** — toggle it in the Other card; the app registers itself under the current-user Run key.
+- **Configurable global hotkeys** — set a shortcut for cycling audio outputs and one for toggling monitoring in the Keyboard shortcuts card.
+
 - **Zero-latency default** — the monitor latency default is 0 ms and can be adjusted from 0 to 500 ms.
 
 ## Requirements
@@ -70,6 +72,8 @@ The script uses `.tools\dotnet` when present, otherwise `dotnet` from `PATH`, an
 ## Repository
 
 https://github.com/Biexone/AudioOutputSwitcher
+
+
 
 
 

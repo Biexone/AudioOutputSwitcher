@@ -18,6 +18,8 @@ namespace LineInTray.WinUI
         private TaskbarIcon? _tray;
         private DispatcherQueueTimer? _hotkeyTimer;
         private bool _hotkeyDown;
+        private bool _switchHotkeyDown;
+        private bool _monitorHotkeyDown;
 
         public static App CurrentApp => (App)Current;
         public AppController Controller { get; private set; } = null!;
@@ -104,16 +106,26 @@ namespace LineInTray.WinUI
         {
             _hotkeyTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
             _hotkeyTimer.Interval = TimeSpan.FromMilliseconds(100);
-            _hotkeyTimer.Tick += (_, _) =>
-            {
-                bool down = (Native.GetAsyncKeyState(0x11) & 0x8000) != 0
-                    && (Native.GetAsyncKeyState(0x12) & 0x8000) != 0
-                    && (Native.GetAsyncKeyState(0x10) & 0x8000) != 0
-                    && (Native.GetAsyncKeyState(0x4C) & 0x8000) != 0;
-                if (down && !_hotkeyDown) ShowQuickPanel();
-                _hotkeyDown = down;
-            };
+            _hotkeyTimer.Tick += (_, _) => CheckHotkeys();
             _hotkeyTimer.Start();
+        }
+
+        private void CheckHotkeys()
+        {
+            HotkeyBinding.TryParse("Ctrl+Alt+Shift+L", out HotkeyBinding panel);
+            bool panelDown = panel.IsDown();
+            if (panelDown && !_hotkeyDown) ShowQuickPanel();
+            _hotkeyDown = panelDown;
+
+            HotkeyBinding.TryParse(Controller.Settings.HotkeySwitchOutput, out HotkeyBinding output);
+            bool outputDown = output.IsDown();
+            if (outputDown && !_switchHotkeyDown) Controller.CycleOutputPreset();
+            _switchHotkeyDown = outputDown;
+
+            HotkeyBinding.TryParse(Controller.Settings.HotkeyToggleMonitor, out HotkeyBinding monitor);
+            bool monitorDown = monitor.IsDown();
+            if (monitorDown && !_monitorHotkeyDown) Controller.ToggleMonitor();
+            _monitorHotkeyDown = monitorDown;
         }
 
         private MenuFlyout? _trayMenu;
@@ -294,6 +306,7 @@ namespace LineInTray.WinUI
         public void Execute(object? parameter) => _action();
     }
 }
+
 
 
 

@@ -39,8 +39,12 @@
 
         <Grid>
             <TextBlock Text="快速切换" Style="{StaticResource SectionHeaderTextStyle}" VerticalAlignment="Center" />
-            <Button Content="管理" HorizontalAlignment="Right" Padding="10,4" MinHeight="0"
-                    Background="Transparent" BorderThickness="0" Click="OnManageClick" />
+            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Style="{StaticResource PanelIconButtonStyle}" Click="OnRefreshDevicesClick" ToolTipService.ToolTip="刷新设备">
+                    <FontIcon Glyph="&#xE72C;" FontSize="13" />
+                </Button>
+                <Button Content="管理" Padding="10,4" MinHeight="0" Background="Transparent" BorderThickness="0" Click="OnManageClick" />
+            </StackPanel>
         </Grid>
 
         <StackPanel x:Name="PresetList" Spacing="8" />
@@ -55,6 +59,7 @@
         </Grid>
     </StackPanel>
 </UserControl>
+
 
 
 

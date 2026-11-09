@@ -6,6 +6,9 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Input;
+using Windows.System;
+using LineInTray.WinUI.Interop;
 using LineInTray;
 using Windows.Graphics;
 
@@ -75,6 +78,8 @@ namespace LineInTray.WinUI
                 StatusText.Text = _app.StatusText;
                 StatusDot.Fill = (Brush)Application.Current.Resources[monitoring ? "SystemFillColorSuccessBrush" : "TextFillColorSecondaryBrush"];
                 LatencyBox.Value = _app.Settings.LatencyMs;
+                OutputHotkeyBox.Text = _app.Settings.HotkeySwitchOutput;
+                MonitorHotkeyBox.Text = _app.Settings.HotkeyToggleMonitor;
                 AutoStartCheck.IsChecked = _app.IsAutoStartEnabled();
                 AutoMonitorCheck.IsChecked = _app.Settings.AutoMonitorOnStart;
 
@@ -298,6 +303,40 @@ namespace LineInTray.WinUI
             _app.SetLatency((int)args.NewValue);
         }
 
+        private void OnHotkeyBoxKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (sender is not TextBox box) return;
+            uint key = (uint)e.Key;
+            if (key == 0) return;
+            if (key == 0x10 || key == 0x11 || key == 0x12 || key == 0x5B || key == 0x5C) return;
+
+            uint modifiers = 0;
+            if ((Native.GetAsyncKeyState(0x11) & 0x8000) != 0) modifiers |= HotkeyBinding.ModControl;
+            if ((Native.GetAsyncKeyState(0x12) & 0x8000) != 0) modifiers |= HotkeyBinding.ModAlt;
+            if ((Native.GetAsyncKeyState(0x10) & 0x8000) != 0) modifiers |= HotkeyBinding.ModShift;
+            if (((Native.GetAsyncKeyState(0x5B) | Native.GetAsyncKeyState(0x5C)) & 0x8000) != 0) modifiers |= HotkeyBinding.ModWin;
+
+            if ((key == 0x08 || key == 0x2E) && modifiers == 0)
+            {
+                box.Text = "";
+                SaveHotkeys();
+                e.Handled = true;
+                return;
+            }
+
+            string? name = HotkeyBinding.KeyName(key);
+            bool functionKey = key >= 0x70 && key <= 0x87;
+            if (name == null || (modifiers == 0 && !functionKey)) return;
+
+            box.Text = HotkeyBinding.Format(modifiers, key);
+            SaveHotkeys();
+            e.Handled = true;
+        }
+
+        private void SaveHotkeys()
+        {
+            _app.SetHotkeys(OutputHotkeyBox.Text, MonitorHotkeyBox.Text);
+        }
         private void OnAutoStartClick(object sender, RoutedEventArgs e)
         {
             if (_updating) return;
@@ -467,6 +506,7 @@ namespace LineInTray.WinUI
         public override string ToString() => Endpoint == null ? Loc.T("playback.default") : Endpoint.DisplayName;
     }
 }
+
 
 
 

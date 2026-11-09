@@ -60,6 +60,10 @@ namespace LineInTray.WinUI
             Add("main.theme", "应用主题", "App theme");
             Add("main.quicktheme", "快捷面板主题", "Quick panel theme");
             Add("main.language", "界面语言", "Language");
+            Add("hotkeys.title", "快捷键", "Keyboard shortcuts");
+            Add("hotkeys.output", "切换音频输出", "Switch audio output");
+            Add("hotkeys.monitor", "开关音频监听", "Toggle audio monitoring");
+            Add("hotkeys.hint", "点击输入框后按下组合键；Backspace/Delete 清除。", "Click a box and press a key combination; Backspace/Delete clears it.");
             Add("main.other", "其他", "Other");
             Add("main.sound", "打开 Windows 声音设置", "Open Windows sound settings");
             Add("main.data", "打开数据目录", "Open data folder");
@@ -199,6 +203,7 @@ namespace LineInTray.WinUI
         }
     }
 }
+
 
 
 

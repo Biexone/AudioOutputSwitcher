@@ -242,6 +242,10 @@ namespace LineInTray.WinUI.Controls
 
         private void OnMonitorClick(object sender, RoutedEventArgs e) => _app.ToggleMonitor();
         private void OnSettingsClick(object sender, RoutedEventArgs e) => SettingsRequested?.Invoke(this, EventArgs.Empty);
+        private void OnRefreshDevicesClick(object sender, RoutedEventArgs e)
+        {
+            _app.RefreshDevices();
+        }
         private void OnManageClick(object sender, RoutedEventArgs e) => ManageRequested?.Invoke(this, EventArgs.Empty);
         private void OnOpenMainClick(object sender, RoutedEventArgs e)
         {
@@ -252,6 +256,7 @@ namespace LineInTray.WinUI.Controls
         private void OnExitClick(object sender, RoutedEventArgs e) => ExitRequested?.Invoke(this, EventArgs.Empty);
     }
 }
+
 
 
 

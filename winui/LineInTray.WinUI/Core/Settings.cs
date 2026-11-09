@@ -14,6 +14,8 @@ namespace LineInTray
         public bool HotkeyEnabled = true;
         public bool AutoMonitorOnStart = false;
         public bool MonitoringEnabled = true;
+        public string HotkeySwitchOutput = "Ctrl+Alt+Shift+O";
+        public string HotkeyToggleMonitor = "Ctrl+Alt+Shift+M";
         public string Theme = "system";
         public string Language = "system";
         public string QuickPanelTheme = "system";
@@ -84,6 +86,10 @@ namespace LineInTray
                 builder.AppendLine("hotkey_enabled=" + (HotkeyEnabled ? "1" : "0"));
                 builder.AppendLine("auto_monitor_on_start=" + (AutoMonitorOnStart ? "1" : "0"));
                 builder.AppendLine("monitoring_enabled=" + (MonitoringEnabled ? "1" : "0"));
+                builder.AppendLine();
+                builder.AppendLine("[hotkeys]");
+                builder.AppendLine("switch_output=" + HotkeySwitchOutput);
+                builder.AppendLine("toggle_monitor=" + HotkeyToggleMonitor);
                 builder.AppendLine();
                 builder.AppendLine("[appearance]");
                 builder.AppendLine("theme=" + Theme);
@@ -177,6 +183,14 @@ namespace LineInTray
             {
                 MonitoringEnabled = ParseBool(value, true);
             }
+            else if (section == "hotkeys" && key == "switch_output")
+            {
+                HotkeySwitchOutput = value;
+            }
+            else if (section == "hotkeys" && key == "toggle_monitor")
+            {
+                HotkeyToggleMonitor = value;
+            }
             else if (section == "appearance" && key == "theme")
             {
                 Theme = value;
@@ -211,6 +225,7 @@ namespace LineInTray
         }
     }
 }
+
 
 
 
